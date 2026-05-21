@@ -19,18 +19,25 @@
         
         #status { margin-top: 30px; font-size: 16px; font-weight: bold; color: #666; height: 24px; }
         
-        #result-container { margin-top: 30px; width: 100%; max-width: 400px; display: none; }
-        .result-card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; border: 2px solid #ddd; }
+        #result-container { margin-top: 20px; width: 100%; max-width: 420px; display: none; }
+        .result-card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; border: 2px solid var(--primary); margin-bottom: 15px; }
         .pokemon-id { color: #888; font-size: 14px; margin-bottom: 5px; }
         .pokemon-name { font-size: 28px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .match-score { font-size: 14px; background: #eee; padding: 4px 12px; border-radius: 10px; display: inline-block; }
 
+        .sub-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .sub-card { background: white; padding: 12px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; border: 1px solid #ddd; }
+        .sub-name { font-weight: bold; font-size: 14px; color: #333; margin-bottom: 4px; }
+        .sub-score { font-size: 12px; color: #666; }
+
         footer { padding: 15px; text-align: center; font-size: 12px; color: #999; }
         
         /* 初期化中表示 */
-        #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        #progress-bar { width: 80%; height: 10px; background: #333; border-radius: 5px; margin-top: 20px; overflow: hidden; }
-        #progress-inner { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
+        #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        #progress-container { width: 80%; text-align: center; }
+        #progress-bar { width: 100%; height: 12px; background: #333; border-radius: 6px; margin-top: 15px; overflow: hidden; border: 1px solid #444; }
+        #progress-inner { width: 0%; height: 100%; background: var(--primary); transition: width 0.1s; }
+        #progress-percent { margin-top: 8px; font-size: 18px; font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -47,17 +54,30 @@
 
     <div id="result-container">
         <div class="result-card">
-            <div class="pokemon-id" id="res-id">No.001</div>
+            <div class="pokemon-id" id="res-id">No.0001</div>
             <div class="pokemon-name" id="res-name">フシギダネ</div>
             <div class="match-score" id="res-score">一致度: 95%</div>
+        </div>
+        <div class="sub-results">
+            <div class="sub-card">
+                <div class="sub-name" id="res-name-2">---</div>
+                <div class="sub-score" id="res-score-2">2位: --%</div>
+            </div>
+            <div class="sub-card">
+                <div class="sub-name" id="res-name-3">---</div>
+                <div class="sub-score" id="res-score-3">3位: --%</div>
+            </div>
         </div>
     </div>
 </main>
 
 <div id="init-overlay">
-    <div id="init-text">鳴き声データを準備中...</div>
-    <div id="progress-bar"><div id="progress-inner"></div></div>
-    <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">初回のみ時間がかかります</div>
+    <div id="init-text" style="font-size: 18px; font-weight: bold;">タップして開始</div>
+    <div id="progress-container">
+        <div id="progress-bar"><div id="progress-inner"></div></div>
+        <div id="progress-percent">0%</div>
+    </div>
+    <div style="font-size: 12px; margin-top: 15px; opacity: 0.8; max-width: 250px; text-align: center;">鳴き声データをGitHubから取得・解析します。初回のみ数分かかります。</div>
 </div>
 
 <footer>
@@ -300,7 +320,13 @@ const resId = document.getElementById('res-id');
 const resName = document.getElementById('res-name');
 const resScore = document.getElementById('res-score');
 const progressInner = document.getElementById('progress-inner');
+const progressPercent = document.getElementById('progress-percent');
 const initOverlay = document.getElementById('init-overlay');
+
+const resName2 = document.getElementById('res-name-2');
+const resScore2 = document.getElementById('res-score-2');
+const resName3 = document.getElementById('res-name-3');
+const resScore3 = document.getElementById('res-score-3');
 
 // IndexedDBの初期化
 async function initDB() {
@@ -363,7 +389,9 @@ async function prepareData() {
             }
         }
         loadedCount++;
-        progressInner.style.width = `${(loadedCount / ids.length) * 100}%`;
+        const percent = Math.floor((loadedCount / ids.length) * 100);
+        progressInner.style.width = `${percent}%`;
+        progressPercent.innerText = `${percent}%`;
     }
     initOverlay.style.display = 'none';
 }
@@ -417,20 +445,36 @@ function compareSignatures(sig1, sig2) {
 }
 
 function identifyPokemon(inputSig) {
-    let bestMatch = { id: null, score: -1 };
+    let allMatches = [];
     
     for (const id in signatures) {
         const score = compareSignatures(inputSig, signatures[id]);
-        if (score > bestMatch.score) {
-            bestMatch = { id, score };
-        }
+        allMatches.push({ id, score });
     }
 
-    if (bestMatch.id) {
-        const p = POKEMON_DB[bestMatch.id];
-        resId.innerText = `No.${bestMatch.id}`;
-        resName.innerText = p.name;
-        resScore.innerText = `一致度: ${Math.floor(bestMatch.score)}%`;
+    // スコア順にソート
+    allMatches.sort((a, b) => b.score - a.score);
+
+    if (allMatches.length > 0 && allMatches[0].score > 0) {
+        const top1 = allMatches[0];
+        const p1 = POKEMON_DB[top1.id];
+        resId.innerText = `No.${top1.id}`;
+        resName.innerText = p1.name;
+        resScore.innerText = `一致度: ${Math.floor(top1.score)}%`;
+
+        // 2位
+        if (allMatches.length > 1) {
+            const top2 = allMatches[1];
+            resName2.innerText = POKEMON_DB[top2.id].name;
+            resScore2.innerText = `2位: ${Math.floor(top2.score)}%`;
+        }
+        // 3位
+        if (allMatches.length > 2) {
+            const top3 = allMatches[2];
+            resName3.innerText = POKEMON_DB[top3.id].name;
+            resScore3.innerText = `3位: ${Math.floor(top3.score)}%`;
+        }
+
         resultContainer.style.display = 'block';
         statusEl.innerText = "判別完了！";
     } else {
