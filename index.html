@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>POKEMON Cry Identification</title>
+    <title>POKEMON Cry ID & Quiz</title>
     <style>
-        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; }
+        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; --correct: #34c759; --wrong: #ff3b30; }
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
         h1 { margin: 0; font-size: 16px; letter-spacing: 1px; }
 
+        /* モード切替タブ */
+        .mode-tabs { display: flex; background: #1c1c1e; padding: 5px; gap: 5px; flex-shrink: 0; border-bottom: 1px solid #333; }
+        .tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
+        .tab.active { background: #333; color: var(--primary); }
+
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
         
+        /* 共通：セクション制御 */
+        .mode-section { width: 100%; display: none; flex-direction: column; align-items: center; }
+        .mode-section.active { display: flex; }
+
+        /* 識別モード：録音エリア */
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
@@ -22,7 +32,7 @@
         
         #status { font-size: 11px; font-weight: bold; color: var(--subtext); text-transform: uppercase; margin-top: 5px; margin-bottom: 15px; }
         
-        #result-container { width: 100%; max-width: 340px; display: none; }
+        #result-container { width: 100%; max-width: 340px; }
         .result-card { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--primary); margin-bottom: 10px; box-shadow: 0 4px 20px rgba(255, 69, 58, 0.1); }
         .pokemon-id { color: #ffffff; font-size: 12px; margin-bottom: 2px; font-weight: bold; }
         .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -44,6 +54,22 @@
         .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.9; margin-bottom: 1px; }
         .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+        /* クイズモード */
+        .quiz-container { width: 100%; max-width: 340px; margin-top: 10px; }
+        #btn-quiz-play { width: 100px; height: 100px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.1s; }
+        #btn-quiz-play:active { transform: scale(0.95); }
+        #btn-quiz-play.playing { border-color: var(--primary); animation: pulse-quiz 1s infinite; }
+        @keyframes pulse-quiz { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        .choices { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .choice-btn { background: #1c1c1e; padding: 18px; border-radius: 12px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .choice-btn:active { background: #2c2c2e; }
+        .choice-btn.correct { background: var(--correct); border-color: var(--correct); color: white; }
+        .choice-btn.wrong { background: var(--wrong); border-color: var(--wrong); color: white; opacity: 0.7; }
+        
+        #quiz-feedback { font-size: 20px; font-weight: bold; margin-top: 20px; height: 30px; text-align: center; }
+        #btn-next-quiz { margin-top: 20px; background: #333; color: white; padding: 12px 30px; border-radius: 20px; font-weight: bold; border: none; display: none; cursor: pointer; }
+
         footer { padding: 10px; text-align: center; font-size: 10px; color: #333; flex-shrink: 0; }
         
         #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
@@ -57,50 +83,75 @@
     <h1>POKEMON Cry Identification</h1>
 </header>
 
+<div class="mode-tabs">
+    <div class="tab active" onclick="switchMode('id')">IDENTIFY</div>
+    <div class="tab" onclick="switchMode('quiz')">QUIZ</div>
+</div>
+
 <main>
-    <div class="recorder-row">
-        <div class="visualizer-container">
-            <canvas id="visualizer"></canvas>
+    <!-- 識別モード -->
+    <div id="id-section" class="mode-section active">
+        <div class="recorder-row">
+            <div class="visualizer-container">
+                <canvas id="visualizer"></canvas>
+            </div>
+            <div id="btn-record">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </div>
         </div>
-        <div id="btn-record">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+        <div id="status">TAP AND HOLD</div>
+
+        <div id="result-container" style="display:none">
+            <div class="result-card">
+                <div class="pokemon-id" id="res-id">No.----</div>
+                <div class="pokemon-name" id="res-name">---</div>
+                <div class="match-score" id="res-score">MATCH: --%</div>
+            </div>
+            <div class="sub-results">
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-2">No.----</span>
+                        <span class="sub-name" id="res-name-2">---</span>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-3">No.----</span>
+                        <span class="sub-name" id="res-name-3">---</span>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-4">4th: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-4">No.----</span>
+                        <span class="sub-name" id="res-name-4">---</span>
+                    </div>
+                </div>
+            </div>
+            <div id="minor-results">
+                <b>OTHERS (5 - 10)</b>
+                <div id="res-minor-list"></div>
+            </div>
         </div>
     </div>
-    <div id="status">TAP AND HOLD</div>
 
-    <div id="result-container">
-        <div class="result-card">
-            <div class="pokemon-id" id="res-id">No.----</div>
-            <div class="pokemon-name" id="res-name">---</div>
-            <div class="match-score" id="res-score">MATCH: --%</div>
-        </div>
-        <div class="sub-results">
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-2">No.----</span>
-                    <span class="sub-name" id="res-name-2">---</span>
-                </div>
+    <!-- クイズモード -->
+    <div id="quiz-section" class="mode-section">
+        <div class="quiz-container">
+            <div id="btn-quiz-play">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
             </div>
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-3">No.----</span>
-                    <span class="sub-name" id="res-name-3">---</span>
-                </div>
+            <div class="choices" id="quiz-choices">
+                <div class="choice-btn" onclick="checkAnswer(0)">Choice 1</div>
+                <div class="choice-btn" onclick="checkAnswer(1)">Choice 2</div>
+                <div class="choice-btn" onclick="checkAnswer(2)">Choice 3</div>
             </div>
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-4">4th: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-4">No.----</span>
-                    <span class="sub-name" id="res-name-4">---</span>
-                </div>
+            <div id="quiz-feedback"></div>
+            <div style="text-align: center">
+                <button id="btn-next-quiz" onclick="nextQuiz()">NEXT CRY</button>
             </div>
-        </div>
-        
-        <div id="minor-results">
-            <b>OTHERS (5 - 10)</b>
-            <div id="res-minor-list"></div>
         </div>
     </div>
 </main>
@@ -337,7 +388,7 @@ const POKEMON_DB = {
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
-const DB_NAME = 'PokemonCryDB_v5'; // 精度ロジック刷新のためv5へ
+const DB_NAME = 'PokemonCryDB_v5'; 
 const STORE_NAME = 'fingerprints_v5';
 
 let audioCtx;
@@ -358,6 +409,10 @@ const canvas = document.getElementById('visualizer');
 const canvasCtx = canvas.getContext('2d');
 let analyser, waveDataArray, animationId, waveHistory = [];
 
+// クイズ用変数
+let quizCorrectId = "";
+let quizChoices = [];
+
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
@@ -369,38 +424,27 @@ async function initDB() {
     });
 }
 
-// 精度向上の肝：音の「質感」をより捉える特徴量抽出 (v5)
 async function extractV5Fingerprint(audioBuffer) {
     const data = audioBuffer.getChannelData(0);
     const sampleRate = audioBuffer.sampleRate;
-    const stepSize = Math.floor(sampleRate * 0.025); // 25ms
-    const windowSize = Math.floor(sampleRate * 0.05); // 50ms
+    const stepSize = Math.floor(sampleRate * 0.025); 
+    const windowSize = Math.floor(sampleRate * 0.05); 
     const fingerprint = [];
-    
     let prevRMS = 0;
     for (let i = 0; i < data.length - windowSize; i += stepSize) {
         const frame = data.slice(i, i + windowSize);
-        
-        // 1. エネルギー (RMS)
         let sumSq = 0;
         for (let j = 0; j < frame.length; j++) sumSq += frame[j] * frame[j];
         const rms = Math.sqrt(sumSq / frame.length);
-        
-        // 2. 音の明るさ (ゼロ交差率)
         let zc = 0;
         for (let j = 1; j < frame.length; j++) {
             if ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0)) zc++;
         }
         const brightness = zc / frame.length;
-        
-        // 3. スペクトル・フラックス (音の変化の激しさ)
         const flux = Math.abs(rms - prevRMS);
         prevRMS = rms;
-
         fingerprint.push({ e: rms, b: brightness, f: flux });
     }
-
-    // 最大値で正規化
     const maxE = Math.max(...fingerprint.map(p => p.e)) || 1;
     const maxF = Math.max(...fingerprint.map(p => p.f)) || 1;
     return fingerprint.map(p => ({ e: p.e / maxE, b: p.b, f: p.f / maxF }));
@@ -429,8 +473,91 @@ async function prepareData() {
     initOverlay.style.display = 'none';
 }
 
-let mediaRecorder, recordedChunks = [], isDrawing = false;
+function switchMode(mode) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+    if (mode === 'id') {
+        document.querySelector('.tab:nth-child(1)').classList.add('active');
+        document.getElementById('id-section').classList.add('active');
+    } else {
+        document.querySelector('.tab:nth-child(2)').classList.add('active');
+        document.getElementById('quiz-section').classList.add('active');
+        nextQuiz(); // クイズ開始
+    }
+}
 
+// クイズロジック
+function nextQuiz() {
+    const ids = Object.keys(POKEMON_DB);
+    quizCorrectId = ids[Math.floor(Math.random() * ids.length)];
+    
+    // 誤答の選択肢を2つ選ぶ
+    let distractors = [];
+    while(distractors.length < 2) {
+        let d = ids[Math.floor(Math.random() * ids.length)];
+        if (d !== quizCorrectId && !distractors.includes(d)) distractors.push(d);
+    }
+    
+    quizChoices = [quizCorrectId, ...distractors].sort(() => Math.random() - 0.5);
+    
+    const choiceButtons = document.querySelectorAll('.choice-btn');
+    quizChoices.forEach((id, index) => {
+        choiceButtons[index].innerText = POKEMON_DB[id].name;
+        choiceButtons[index].className = 'choice-btn';
+        choiceButtons[index].dataset.id = id;
+    });
+    
+    document.getElementById('quiz-feedback').innerText = "";
+    document.getElementById('btn-next-quiz').style.display = 'none';
+    document.getElementById('btn-quiz-play').className = '';
+}
+
+async function playQuizCry() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const btn = document.getElementById('btn-quiz-play');
+    btn.classList.add('playing');
+    
+    try {
+        const resp = await fetch(`${BASE_URL}${quizCorrectId}.${POKEMON_DB[quizCorrectId].ext}`);
+        const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.onended = () => btn.classList.remove('playing');
+        source.start(0);
+    } catch (e) {
+        btn.classList.remove('playing');
+        alert("音源の再生に失敗しました。");
+    }
+}
+
+function checkAnswer(index) {
+    const choiceButtons = document.querySelectorAll('.choice-btn');
+    const selectedId = quizChoices[index];
+    const feedback = document.getElementById('quiz-feedback');
+    
+    if (document.getElementById('btn-next-quiz').style.display === 'block') return; // すでに回答済み
+
+    if (selectedId === quizCorrectId) {
+        choiceButtons[index].classList.add('correct');
+        feedback.innerText = "CORRECT! ✨";
+        feedback.style.color = "var(--correct)";
+    } else {
+        choiceButtons[index].classList.add('wrong');
+        feedback.innerText = "WRONG... 😢";
+        feedback.style.color = "var(--wrong)";
+        // 正解を表示
+        quizChoices.forEach((id, i) => {
+            if (id === quizCorrectId) choiceButtons[i].classList.add('correct');
+        });
+    }
+    document.getElementById('btn-next-quiz').style.display = 'block';
+}
+
+document.getElementById('btn-quiz-play').addEventListener('click', playQuizCry);
+
+// 識別ロジック (Engine v5)
+let mediaRecorder, recordedChunks = [], isDrawing = false;
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
@@ -487,12 +614,10 @@ function trimSilence(sig) {
     return s > e ? [] : sig.slice(s, e + 1);
 }
 
-// 精度向上の要：非線形スコアリングとマルチ特徴量マッチング
 function compareFingerprints(sig1, sig2) {
     const s1 = trimSilence(sig1), s2 = trimSilence(sig2);
-    if (s1.length === 0 || s2.length === 0) return 10.0; // 最小距離
+    if (s1.length === 0 || s2.length === 0) return 10.0;
     let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1, minD = Infinity;
-    
     for (let o = 0; o <= lg.length - sh.length; o++) {
         let d = 0;
         for (let i = 0; i < sh.length; i++) {
@@ -504,33 +629,20 @@ function compareFingerprints(sig1, sig2) {
         d = Math.sqrt(d / sh.length);
         if (d < minD) minD = d;
     }
-    
-    // 指数関数によるスコア写像 (人間にとって自然な「一致感」を出す)
-    // 距離 0.1 -> 約91%, 距離 0.3 -> 約74%, 距離 0.8 -> 約45%
     let score = 100 * Math.exp(-minD * 1.2);
-    
-    // 長さの極端な不一致へのペナルティをマイルドに
     const ratio = sh.length / lg.length;
     if (ratio < 0.4) score *= (ratio + 0.6); 
-
     return score;
 }
 
 function identifyPokemon(inputSig) {
     let matches = Object.keys(signatures).map(id => ({ id, score: compareFingerprints(inputSig, signatures[id]) }));
     matches.sort((a, b) => b.score - a.score);
-
     if (matches.length > 0) {
         const top = matches[0];
-        // スコアを少しブーストして「自信満々」に見せる演出（相対的な差を強調）
         const displayScore = Math.floor(Math.min(99, top.score + 15));
         resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${displayScore}%`;
-
-        const subs = [
-            { n: resName2, s: resScore2, i: resId2, l: "2nd" },
-            { n: resName3, s: resScore3, i: resId3, l: "3rd" },
-            { n: resName4, s: resScore4, i: resId4, l: "4th" }
-        ];
+        const subs = [ { n: resName2, s: resScore2, i: resId2, l: "2nd" }, { n: resName3, s: resScore3, i: resId3, l: "3rd" }, { n: resName4, s: resScore4, i: resId4, l: "4th" } ];
         for (let j = 0; j < subs.length; j++) {
             const m = matches[j + 1];
             if (m) {
