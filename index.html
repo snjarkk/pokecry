@@ -445,8 +445,8 @@ function drawWave() {
     const midY = canvas.height / 2;
     for(let i=0; i<waveHistory.length; i++) {
         const x = (i / waveHistory.length) * canvas.width;
-        // 振幅の感度を上げ、よりダイナミックに表示 (1.5倍から2倍程度に強調)
-        const h = Math.min(canvas.height / 2, (waveHistory[i] / 128) * (canvas.height * 0.8));
+        // 振幅の感度をさらに上げ、よりダイナミックに強調 (振幅を約3倍に強調)
+        const h = Math.min(canvas.height / 2 - 2, (waveHistory[i] / 128) * (canvas.height * 1.5));
         canvasCtx.moveTo(x, midY - h); canvasCtx.lineTo(x, midY + h);
     }
     canvasCtx.stroke();
