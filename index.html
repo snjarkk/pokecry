@@ -535,7 +535,8 @@ function identifyPokemon(inputSig) {
     let matches = Object.keys(signatures).map(id => ({ id, score: compareFingerprints(inputSig, signatures[id]) }));
     matches.sort((a, b) => b.score - a.score);
 
-    if (matches.length > 0 && matches[0].score > 10) {
+    // 常に上位10件を表示（判定が低くてもリストを埋める）
+    if (matches.length > 0) {
         const top = matches[0];
         resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${Math.floor(top.score)}%`;
 
@@ -546,7 +547,7 @@ function identifyPokemon(inputSig) {
         ];
         for (let j = 0; j < subs.length; j++) {
             const m = matches[j + 1];
-            if (m && m.score > 0) {
+            if (m) {
                 subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
             } else { subs[j].n.innerText = "---"; subs[j].s.innerText = `${subs[j].l}: --%`; subs[j].i.innerText = "No.----"; }
         }
@@ -554,7 +555,7 @@ function identifyPokemon(inputSig) {
         resMinorList.innerHTML = "";
         for (let k = 4; k < 10; k++) {
             const m = matches[k];
-            if (m && m.score > 0) {
+            if (m) {
                 const item = document.createElement('div'); item.className = 'minor-item';
                 item.innerHTML = `<div class="minor-rank-box">${k + 1}</div><div class="minor-content"><div class="minor-id">No.${m.id}</div><div class="minor-name">${POKEMON_DB[m.id].name}</div></div>`;
                 resMinorList.appendChild(item);
