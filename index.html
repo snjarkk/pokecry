@@ -3,49 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ポケモン鳴き声判別システム</title>
+    <title>POKEMON CRY ID</title>
     <style>
-        :root { --primary: #ff3b30; --bg: #f2f2f7; --card: #ffffff; }
-        body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-size: 18px; }
+        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #8e8e93; }
+        body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { background: #1c1c1e; color: var(--primary); padding: 12px; text-align: center; border-bottom: 1px solid #333; }
+        h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
 
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; padding-top: 10px; overflow-y: auto; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; padding-top: 5px; overflow-y: auto; }
         
-        .recorder-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; width: 100%; flex-shrink: 0; }
+        .recorder-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 170px; width: 100%; flex-shrink: 0; position: relative; }
 
-        #btn-record { width: 110px; height: 110px; border-radius: 50%; background: var(--primary); border: 6px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, box-shadow 0.3s; -webkit-tap-highlight-color: transparent; }
-        #btn-record:active { transform: scale(0.95); box-shadow: 0 0 30px rgba(255, 59, 48, 0.6); }
-        #btn-record.recording { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { box-shadow: 0 0 0 25px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
+        #visualizer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; z-index: 0; opacity: 0.4; pointer-events: none; }
+
+        #btn-record { width: 100px; height: 100px; border-radius: 50%; background: var(--primary); border: 5px solid #333; box-shadow: 0 0 20px rgba(255, 69, 58, 0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, box-shadow 0.3s; -webkit-tap-highlight-color: transparent; z-index: 1; position: relative; }
+        #btn-record:active { transform: scale(0.92); }
+        #btn-record.recording { box-shadow: 0 0 40px rgba(255, 69, 58, 0.6); }
         
-        #status { margin-top: 12px; font-size: 13px; font-weight: bold; color: #666; height: 18px; }
+        #status { margin-top: 10px; font-size: 13px; font-weight: bold; color: var(--subtext); height: 18px; z-index: 1; text-transform: uppercase; }
         
         #result-container { margin-top: 5px; width: 100%; max-width: 420px; display: none; }
-        .result-card { background: var(--card); padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; border: 2px solid var(--primary); margin-bottom: 8px; }
-        .pokemon-id { color: #888; font-size: 11px; margin-bottom: 1px; }
-        .pokemon-name { font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 6px; }
-        .match-score { font-size: 12px; background: #eee; padding: 2px 8px; border-radius: 6px; display: inline-block; }
+        .result-card { background: var(--card); padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; border: 1px solid #333; margin-bottom: 8px; }
+        .pokemon-id { color: var(--subtext); font-size: 11px; margin-bottom: 1px; }
+        .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 10px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
 
-        .sub-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-        .sub-card { background: white; padding: 8px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: stretch; border: 1px solid #ddd; }
-        .sub-rank-score { font-size: 11px; color: #666; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; text-align: center; }
-        .sub-info { display: flex; flex-direction: row; align-items: baseline; gap: 6px; }
-        .sub-id { font-size: 11px; color: #999; flex-shrink: 0; }
-        .sub-name { font-weight: bold; font-size: 20px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; display: flex; align-items: center; }
+        .sub-results { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+        .sub-card { background: var(--card); padding: 8px; border-radius: 10px; display: flex; flex-direction: column; align-items: stretch; border: 1px solid #2c2c2e; }
+        .sub-rank-score { font-size: 10px; color: var(--subtext); background: #2c2c2e; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; text-align: center; }
+        .sub-info { display: flex; flex-direction: row; align-items: center; gap: 5px; overflow: hidden; }
+        .sub-id { font-size: 10px; color: #666; flex-shrink: 0; }
+        .sub-name { font-weight: bold; font-size: 19px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; display: flex; align-items: center; }
 
-        #minor-results { margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.5); border-radius: 10px; text-align: center; }
-        #minor-results b { font-size: 12px; color: #777; display: block; margin-bottom: 5px; }
-        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 15px; color: #333; font-weight: bold; text-align: left; }
-        .minor-item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
-        .minor-rank { font-size: 10px; color: #999; margin-right: 4px; width: 18px; text-align: right; }
-        .minor-id { font-size: 10px; color: #aaa; margin-right: 5px; font-weight: normal; }
+        #minor-results { margin-top: 10px; padding: 10px; background: #1c1c1e; border-radius: 10px; border: 1px solid #2c2c2e; }
+        #minor-results b { font-size: 11px; color: #666; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 18px; color: #bbb; font-weight: bold; }
+        .minor-item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 2px; }
+        .minor-rank { font-size: 11px; color: #555; margin-right: 4px; width: 18px; text-align: right; }
+        .minor-id { font-size: 11px; color: #444; margin-right: 5px; font-weight: normal; }
 
-        footer { padding: 10px; text-align: center; font-size: 11px; color: #999; flex-shrink: 0; }
+        footer { padding: 10px; text-align: center; font-size: 10px; color: #444; flex-shrink: 0; }
         
-        #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
         #progress-container { width: 80%; text-align: center; }
-        #progress-bar { width: 100%; height: 12px; background: #333; border-radius: 6px; margin-top: 15px; overflow: hidden; border: 1px solid #444; }
+        #progress-bar { width: 100%; height: 6px; background: #1c1c1e; border-radius: 3px; margin-top: 15px; overflow: hidden; }
         #progress-inner { width: 0%; height: 100%; background: var(--primary); transition: width 0.1s; }
         #progress-percent { margin-top: 8px; font-size: 18px; font-weight: bold; font-family: monospace; }
     </style>
@@ -53,15 +54,16 @@
 <body>
 
 <header>
-    <h1>ポケモン鳴き声判別</h1>
+    <h1>POKEMON CRY ID</h1>
 </header>
 
 <main>
     <div class="recorder-section">
+        <canvas id="visualizer"></canvas>
         <div id="btn-record">
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            <svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
         </div>
-        <div id="status">ボタンを押しながら聞かせてください</div>
+        <div id="status">TAP AND HOLD</div>
     </div>
 
     <div id="result-container">
@@ -72,49 +74,48 @@
         </div>
         <div class="sub-results">
             <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-2">2位: --%</div>
+                <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
                 <div class="sub-info">
-                    <div class="sub-id" id="res-id-2">No.----</div>
-                    <div class="sub-name" id="res-name-2">---</div>
+                    <span class="sub-id" id="res-id-2">No.----</span>
+                    <span class="sub-name" id="res-name-2">---</span>
                 </div>
             </div>
             <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-3">3位: --%</div>
+                <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
                 <div class="sub-info">
-                    <div class="sub-id" id="res-id-3">No.----</div>
-                    <div class="sub-name" id="res-name-3">---</div>
+                    <span class="sub-id" id="res-id-3">No.----</span>
+                    <span class="sub-name" id="res-name-3">---</span>
                 </div>
             </div>
             <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-4">4位: --%</div>
+                <div class="sub-rank-score" id="res-score-4">4th: --%</div>
                 <div class="sub-info">
-                    <div class="sub-id" id="res-id-4">No.----</div>
-                    <div class="sub-name" id="res-name-4">---</div>
+                    <span class="sub-id" id="res-id-4">No.----</span>
+                    <span class="sub-name" id="res-name-4">---</span>
                 </div>
             </div>
             <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-5">5位: --%</div>
+                <div class="sub-rank-score" id="res-score-5">5th: --%</div>
                 <div class="sub-info">
-                    <div class="sub-id" id="res-id-5">No.----</div>
-                    <div class="sub-name" id="res-name-5">---</div>
+                    <span class="sub-id" id="res-id-5">No.----</span>
+                    <span class="sub-name" id="res-name-5">---</span>
                 </div>
             </div>
         </div>
         
         <div id="minor-results">
-            <div style="margin-bottom: 5px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 3px;">6位 〜 10位</div>
-            <div id="res-minor-list">---</div>
+            <b>Ranks 6 - 10</b>
+            <div id="res-minor-list"></div>
         </div>
     </div>
 </main>
 
 <div id="init-overlay">
-    <div id="init-text" style="font-size: 18px; font-weight: bold;">タップして開始</div>
+    <div id="init-text" style="font-size: 18px; font-weight: bold; letter-spacing: 2px;">TAP TO START</div>
     <div id="progress-container">
         <div id="progress-bar"><div id="progress-inner"></div></div>
         <div id="progress-percent">0%</div>
     </div>
-    <div style="font-size: 11px; margin-top: 15px; opacity: 0.8; max-width: 250px; text-align: center;">鳴き声データを解析します。初回のみ時間がかかります。</div>
 </div>
 
 <footer>
@@ -373,6 +374,12 @@ const resScore5 = document.getElementById('res-score-5');
 const resId5 = document.getElementById('res-id-5');
 const resMinorList = document.getElementById('res-minor-list');
 
+const canvas = document.getElementById('visualizer');
+const canvasCtx = canvas.getContext('2d');
+let analyser;
+let dataArray;
+let animationId;
+
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
@@ -445,17 +452,29 @@ async function prepareData() {
 
 let mediaRecorder;
 let recordedChunks = [];
+let source;
 
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    source = audioCtx.createMediaStreamSource(stream);
+    source.connect(analyser);
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
     mediaRecorder = new MediaRecorder(stream);
     recordedChunks = [];
 
     mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
     mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(track => track.stop());
+        cancelAnimationFrame(animationId);
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        
         const blob = new Blob(recordedChunks);
         const arrayBuffer = await blob.arrayBuffer();
         const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
@@ -465,15 +484,39 @@ async function startRecording() {
 
     mediaRecorder.start();
     btnRecord.classList.add('recording');
-    statusEl.innerText = "聞き取り中...";
+    statusEl.innerText = "LISTENING...";
     resultContainer.style.display = 'none';
+    draw();
+}
+
+function draw() {
+    animationId = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+    
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    canvasCtx.beginPath();
+    for(let i = 0; i < dataArray.length; i++) {
+        const angle = (i / dataArray.length) * Math.PI * 2;
+        const radius = 40 + (dataArray[i] / 255) * 40;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        if(i === 0) canvasCtx.moveTo(x, y);
+        else canvasCtx.lineTo(x, y);
+    }
+    canvasCtx.closePath();
+    canvasCtx.strokeStyle = '#ff453a';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.stroke();
 }
 
 function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
         btnRecord.classList.remove('recording');
-        statusEl.innerText = "解析中...";
+        statusEl.innerText = "ANALYZING...";
     }
 }
 
@@ -524,41 +567,44 @@ function identifyPokemon(inputSig) {
         const top1 = allMatches[0];
         resId.innerText = `No.${top1.id}`;
         resName.innerText = POKEMON_DB[top1.id].name;
-        resScore.innerText = `一致度: ${Math.floor(top1.score)}%`;
+        resScore.innerText = `MATCH: ${Math.floor(top1.score)}%`;
 
         const subFields = [
-            { name: resName2, score: resScore2, id: resId2 },
-            { name: resName3, score: resScore3, id: resId3 },
-            { name: resName4, score: resScore4, id: resId4 },
-            { name: resName5, score: resScore5, id: resId5 }
+            { name: resName2, score: resScore2, id: resId2, label: "2nd" },
+            { name: resName3, score: resScore3, id: resId3, label: "3rd" },
+            { name: resName4, score: resScore4, id: resId4, label: "4th" },
+            { name: resName5, score: resScore5, id: resId5, label: "5th" }
         ];
 
         for (let i = 0; i < subFields.length; i++) {
             const match = allMatches[i + 1];
             if (match && match.score > 0) {
                 subFields[i].name.innerText = POKEMON_DB[match.id].name;
-                subFields[i].score.innerText = `${i + 2}位: ${Math.floor(match.score)}%`;
+                subFields[i].score.innerText = `${subFields[i].label}: ${Math.floor(match.score)}%`;
                 subFields[i].id.innerText = `No.${match.id}`;
             } else {
                 subFields[i].name.innerText = "---";
-                subFields[i].score.innerText = `${i + 2}位: --%`;
+                subFields[i].score.innerText = `${subFields[i].label}: --%`;
                 subFields[i].id.innerText = "No.----";
             }
         }
 
-        let minorEntries = [];
+        resMinorList.innerHTML = "";
         for (let i = 5; i < 10; i++) {
             const match = allMatches[i];
             if (match && match.score > 0) {
-                minorEntries.push(`${i + 1}.${POKEMON_DB[match.id].name}`);
+                const div = document.createElement('div');
+                div.className = 'minor-item';
+                div.innerHTML = `<span class="minor-rank">${i + 1}.</span><span class="minor-id">No.${match.id}</span>${POKEMON_DB[match.id].name}`;
+                resMinorList.appendChild(div);
             }
         }
-        resMinorList.innerText = minorEntries.length > 0 ? minorEntries.join(" / ") : "---";
+        if (resMinorList.innerHTML === "") resMinorList.innerText = "---";
 
         resultContainer.style.display = 'block';
-        statusEl.innerText = "判別完了！";
+        statusEl.innerText = "ID COMPLETE";
     } else {
-        statusEl.innerText = "判別できませんでした";
+        statusEl.innerText = "COULD NOT ID";
     }
 }
 
@@ -568,9 +614,11 @@ btnRecord.addEventListener('touchstart', (e) => { e.preventDefault(); startRecor
 btnRecord.addEventListener('touchend', (e) => { e.preventDefault(); stopRecording(); });
 
 window.onload = () => {
+    canvas.width = 200;
+    canvas.height = 200;
     initOverlay.addEventListener('click', async () => {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        document.getElementById('init-text').innerText = "データをロード中...";
+        document.getElementById('init-text').innerText = "LOADING DATA...";
         prepareData();
     });
 };
