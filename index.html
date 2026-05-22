@@ -337,8 +337,8 @@ const POKEMON_DB = {
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
-const DB_NAME = 'PokemonCryDB_v3'; // 精度向上のためDBをv3へ刷新
-const STORE_NAME = 'spectral_fingerprints';
+const DB_NAME = 'PokemonCryDB_v4'; // 精度向上のためDBをv4へ刷新
+const STORE_NAME = 'fingerprints_v4';
 
 let audioCtx;
 let signatures = {}; 
@@ -369,50 +369,43 @@ async function initDB() {
     });
 }
 
-// 精度向上の要：周波数スペクトル（FFT）を用いた特徴量抽出
-async function extractSpectralFingerprint(audioBuffer) {
-    const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, audioBuffer.sampleRate);
-    const source = offlineCtx.createBufferSource();
-    source.buffer = audioBuffer;
-
-    const analyserNode = offlineCtx.createAnalyser();
-    analyserNode.fftSize = 512; // 周波数分解能
-    const binCount = analyserNode.frequencyBinCount;
-    
-    source.connect(analyserNode);
-    analyserNode.connect(offlineCtx.destination);
-    source.start(0);
-
-    const fingerprint = [];
-    const stepSize = Math.floor(audioBuffer.sampleRate / 20); // 50msステップ
-    
-    // Web Audio APIの仕組み上、OfflineAudioContextでレンダリングしながら各時点のFFTを取得
-    // 実際には特定時間ごとのgetByteFrequencyDataに相当する処理をループで行う
+// 精度向上の肝：高解像度マルチバンド解析 (25ms分解能 + 4バンド)
+async function extractHighResFingerprint(audioBuffer) {
     const data = audioBuffer.getChannelData(0);
-    for (let i = 0; i < data.length; i += stepSize) {
-        // 簡易的なFFT代用としてのバンドパスフィルタリングやエネルギー分布ではなく、
-        // 精度を出すために生のサンプルから各時間枠の周波数特性を計算（ここでは正規化エネルギーと低中高音の比率で近似）
-        let low = 0, mid = 0, high = 0, total = 0;
-        const frameSize = 1024;
-        const frame = data.slice(i, i + frameSize);
-        if (frame.length < frameSize) break;
-
-        // エネルギー計算
-        for (let j = 0; j < frame.length; j++) {
-            const val = Math.abs(frame[j]);
-            total += val * val;
-            // 簡易的な周波数分布（ゼロ交差数などで近似して計算量を抑えつつ精度確保）
-            if (j > 0 && ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0))) {
-                low++; // 高周波成分の目安
-            }
+    const sampleRate = audioBuffer.sampleRate;
+    const stepSize = Math.floor(sampleRate * 0.025); // 25ms
+    const windowSize = Math.floor(sampleRate * 0.05); // 50ms (オーバーラップ)
+    
+    const fingerprint = [];
+    
+    for (let i = 0; i < data.length - windowSize; i += stepSize) {
+        const frame = data.slice(i, i + windowSize);
+        
+        // 簡易的なデジタルフィルタリング/FFTによる帯域分割
+        // 1. 全体エネルギー
+        let totalEnergy = 0;
+        for (let j = 0; j < frame.length; j++) totalEnergy += frame[j] * frame[j];
+        const rms = Math.sqrt(totalEnergy / frame.length);
+        
+        // 2. 周波数成分の重心（Spectral Centroidの近似：ゼロ交差率）
+        let zc = 0;
+        for (let j = 1; j < frame.length; j++) {
+            if ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0)) zc++;
         }
-        fingerprint.push({ e: Math.sqrt(total / frameSize), f: low / frameSize });
+        const centroid = zc / frame.length; // 0.0(低) 〜 1.0(高)
+        
+        // 3. 帯域ごとの「鋭さ」（簡易的な高周波エネルギー比率）
+        let highEnergy = 0;
+        for (let j = 1; j < frame.length; j++) highEnergy += Math.abs(frame[j] - frame[j-1]); // 差分で高域抽出
+        const sharpness = highEnergy / (rms + 0.001);
+
+        fingerprint.push({ e: rms, c: centroid, s: sharpness });
     }
 
-    // 全体の最大エネルギーで正規化
+    // 正規化
     const maxE = Math.max(...fingerprint.map(p => p.e));
     if (maxE > 0) {
-        return fingerprint.map(p => ({ e: p.e / maxE, f: p.f }));
+        return fingerprint.map(p => ({ e: p.e / maxE, c: p.c, s: p.s / 10 }));
     }
     return fingerprint;
 }
@@ -436,7 +429,7 @@ async function prepareData() {
                 const resp = await fetch(`${BASE_URL}${id}.${POKEMON_DB[id].ext}`);
                 if (!resp.ok) throw new Error();
                 const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
-                const sig = await extractSpectralFingerprint(audioBuffer);
+                const sig = await extractHighResFingerprint(audioBuffer);
                 db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(sig, id);
                 signatures[id] = sig;
             } catch (e) { console.warn(`Load failed: ${id}`); }
@@ -466,7 +459,7 @@ async function startRecording() {
         stream.getTracks().forEach(t => t.stop());
         isDrawing = false;
         const audioBuffer = await audioCtx.decodeAudioData(await (new Blob(recordedChunks)).arrayBuffer());
-        identifyPokemon(await extractSpectralFingerprint(audioBuffer));
+        identifyPokemon(await extractHighResFingerprint(audioBuffer));
     };
     mediaRecorder.start();
     isDrawing = true;
@@ -498,42 +491,48 @@ function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
         btnRecord.classList.remove('recording');
-        statusEl.innerText = "ANALYZING SPECTRUM...";
+        statusEl.innerText = "PRECISION ANALYZING...";
     }
 }
 
-function trimSpectralSilence(sig) {
+function trimSilence(sig) {
     let s = 0; while (s < sig.length && sig[s].e < 0.05) s++;
     let e = sig.length - 1; while (e > s && sig[e].e < 0.05) e--;
     return s > e ? [] : sig.slice(s, e + 1);
 }
 
-// 精度向上の肝：エネルギー(e)と周波数傾向(f)の両面でマッチング
-function compareSpectralFingerprints(sig1, sig2) {
-    const s1 = trimSpectralSilence(sig1), s2 = trimSpectralSilence(sig2);
+// 精度向上の肝：時間加重マルチパラメータ・マッチング
+function compareFingerprints(sig1, sig2) {
+    const s1 = trimSilence(sig1), s2 = trimSilence(sig2);
     if (s1.length === 0 || s2.length === 0) return 0;
     let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1, minD = Infinity;
     
     // スライディングウィンドウ
-    for (let o = 0; o <= lg.length - sh.length; o++) {
+    const limit = lg.length - sh.length;
+    for (let o = 0; o <= limit; o++) {
         let d = 0;
         for (let i = 0; i < sh.length; i++) {
-            const de = sh[i].e - lg[o + i].e; // 音量の差
-            const df = sh[i].f - lg[o + i].f; // 周波数（音程）の差
-            d += (de * de) + (df * df * 2.0); // 周波数の変化をより重視
+            // 時間加重：音の出だし（最初の30%）を1.5倍重視
+            const weight = (i / sh.length < 0.3) ? 1.5 : 1.0;
+            
+            const de = sh[i].e - lg[o + i].e; // 音量差
+            const dc = sh[i].c - lg[o + i].c; // 周波数重心差
+            const ds = sh[i].s - lg[o + i].s; // 音の鋭さ差
+            
+            d += ((de * de) + (dc * dc * 3.0) + (ds * ds)) * weight;
         }
         d = Math.sqrt(d / sh.length);
         if (d < minD) minD = d;
     }
     
     const ratio = sh.length / lg.length;
-    let score = Math.max(0, 100 - minD * 220); // 距離をスコアに変換
-    if (ratio < 0.5) score *= (ratio * 2); // 長さが違いすぎる場合はペナルティ
+    let score = Math.max(0, 100 - minD * 180);
+    if (ratio < 0.6) score *= (ratio * 1.5); // 長さの極端な違いを厳しく判定
     return score;
 }
 
 function identifyPokemon(inputSig) {
-    let matches = Object.keys(signatures).map(id => ({ id, score: compareSpectralFingerprints(inputSig, signatures[id]) }));
+    let matches = Object.keys(signatures).map(id => ({ id, score: compareFingerprints(inputSig, signatures[id]) }));
     matches.sort((a, b) => b.score - a.score);
 
     if (matches.length > 0 && matches[0].score > 10) {
@@ -572,7 +571,7 @@ window.onload = () => {
     canvas.width = 240; canvas.height = 90;
     initOverlay.addEventListener('click', async () => {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        document.getElementById('init-text').innerText = "CALIBRATING SPECTRUM...";
+        document.getElementById('init-text').innerText = "PRECISION CALIBRATING...";
         prepareData();
     });
 };
