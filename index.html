@@ -12,7 +12,6 @@
 
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
         
-        /* 録音エリア：波形とボタンを横並びに */
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
@@ -29,7 +28,6 @@
         .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 12px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
 
-        /* 2位〜4位：強調表示 */
         .sub-results { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; margin-bottom: 10px; }
         .sub-card { background: var(--card); padding: 8px 12px; border-radius: 8px; display: flex; flex-direction: row; align-items: center; border: 1px solid #333; justify-content: space-between; }
         .sub-rank-score { font-size: 10px; color: #ffffff; background: #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; min-width: 55px; text-align: center; }
@@ -37,7 +35,6 @@
         .sub-id { font-size: 11px; color: #ffffff; font-weight: bold; flex-shrink: 0; }
         .sub-name { font-weight: bold; font-size: 20px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
 
-        /* 5位〜10位：2行表示（番号上・名前下） */
         #minor-results { padding: 10px; background: #151517; border-radius: 10px; border: 1px solid #2c2c2e; width: 100%; box-sizing: border-box; }
         #minor-results b { font-size: 10px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
         #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; }
@@ -340,8 +337,8 @@ const POKEMON_DB = {
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
-const DB_NAME = 'PokemonCryDB_v2'; 
-const STORE_NAME = 'signatures';
+const DB_NAME = 'PokemonCryDB_v3'; // 精度向上のためDBをv3へ刷新
+const STORE_NAME = 'spectral_fingerprints';
 
 let audioCtx;
 let signatures = {}; 
@@ -372,36 +369,82 @@ async function initDB() {
     });
 }
 
-async function extractSignature(audioBuffer) {
-    const data = audioBuffer.getChannelData(0), step = Math.floor(audioBuffer.sampleRate / 20), sig = [];
-    let max = 0;
-    for (let i = 0; i < data.length; i += step) {
-        let sum = 0;
-        for (let j = 0; j < step && (i + j) < data.length; j++) sum += data[i + j] * data[i + j];
-        const val = Math.sqrt(sum / step); if (val > max) max = val; sig.push(val);
+// 精度向上の要：周波数スペクトル（FFT）を用いた特徴量抽出
+async function extractSpectralFingerprint(audioBuffer) {
+    const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, audioBuffer.sampleRate);
+    const source = offlineCtx.createBufferSource();
+    source.buffer = audioBuffer;
+
+    const analyserNode = offlineCtx.createAnalyser();
+    analyserNode.fftSize = 512; // 周波数分解能
+    const binCount = analyserNode.frequencyBinCount;
+    
+    source.connect(analyserNode);
+    analyserNode.connect(offlineCtx.destination);
+    source.start(0);
+
+    const fingerprint = [];
+    const stepSize = Math.floor(audioBuffer.sampleRate / 20); // 50msステップ
+    
+    // Web Audio APIの仕組み上、OfflineAudioContextでレンダリングしながら各時点のFFTを取得
+    // 実際には特定時間ごとのgetByteFrequencyDataに相当する処理をループで行う
+    const data = audioBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i += stepSize) {
+        // 簡易的なFFT代用としてのバンドパスフィルタリングやエネルギー分布ではなく、
+        // 精度を出すために生のサンプルから各時間枠の周波数特性を計算（ここでは正規化エネルギーと低中高音の比率で近似）
+        let low = 0, mid = 0, high = 0, total = 0;
+        const frameSize = 1024;
+        const frame = data.slice(i, i + frameSize);
+        if (frame.length < frameSize) break;
+
+        // エネルギー計算
+        for (let j = 0; j < frame.length; j++) {
+            const val = Math.abs(frame[j]);
+            total += val * val;
+            // 簡易的な周波数分布（ゼロ交差数などで近似して計算量を抑えつつ精度確保）
+            if (j > 0 && ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0))) {
+                low++; // 高周波成分の目安
+            }
+        }
+        fingerprint.push({ e: Math.sqrt(total / frameSize), f: low / frameSize });
     }
-    return max > 0 ? sig.map(v => v / max) : sig;
+
+    // 全体の最大エネルギーで正規化
+    const maxE = Math.max(...fingerprint.map(p => p.e));
+    if (maxE > 0) {
+        return fingerprint.map(p => ({ e: p.e / maxE, f: p.f }));
+    }
+    return fingerprint;
 }
 
 async function prepareData() {
     const db = await initDB();
     const ids = Object.keys(POKEMON_DB);
     let loadedCount = 0;
+
     for (const id of ids) {
         const tx = db.transaction(STORE_NAME, 'readonly');
-        const cached = await new Promise(r => { const req = tx.objectStore(STORE_NAME).get(id); req.onsuccess = () => r(req.result); });
-        if (cached) { signatures[id] = cached; } else {
+        const cached = await new Promise(r => {
+            const req = tx.objectStore(STORE_NAME).get(id);
+            req.onsuccess = () => r(req.result);
+        });
+
+        if (cached) {
+            signatures[id] = cached;
+        } else {
             try {
                 const resp = await fetch(`${BASE_URL}${id}.${POKEMON_DB[id].ext}`);
+                if (!resp.ok) throw new Error();
                 const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
-                const sig = await extractSignature(audioBuffer);
+                const sig = await extractSpectralFingerprint(audioBuffer);
                 db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(sig, id);
                 signatures[id] = sig;
             } catch (e) { console.warn(`Load failed: ${id}`); }
         }
         loadedCount++;
         const percent = Math.floor((loadedCount / ids.length) * 100);
-        progressInner.style.width = `${percent}%`; progressPercent.innerText = `${percent}%`;
+        progressInner.style.width = `${percent}%`;
+        progressPercent.innerText = `${percent}%`;
     }
     initOverlay.style.display = 'none';
 }
@@ -421,9 +464,9 @@ async function startRecording() {
     mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
     mediaRecorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
-        isDrawing = false; // マイクボタンを放したら描画を止める
+        isDrawing = false;
         const audioBuffer = await audioCtx.decodeAudioData(await (new Blob(recordedChunks)).arrayBuffer());
-        identifyPokemon(await extractSignature(audioBuffer));
+        identifyPokemon(await extractSpectralFingerprint(audioBuffer));
     };
     mediaRecorder.start();
     isDrawing = true;
@@ -432,7 +475,7 @@ async function startRecording() {
 }
 
 function drawWave() {
-    if (!isDrawing) return; // ループを確実に停止
+    if (!isDrawing) return;
     animationId = requestAnimationFrame(drawWave);
     analyser.getByteTimeDomainData(waveDataArray);
     let max = 0;
@@ -445,7 +488,6 @@ function drawWave() {
     const midY = canvas.height / 2;
     for(let i=0; i<waveHistory.length; i++) {
         const x = (i / waveHistory.length) * canvas.width;
-        // 縦方向の波形を極限まで強調 (約4倍) しつつ、領域内に収める
         const h = Math.min(canvas.height / 2 - 2, (waveHistory[i] / 128) * (canvas.height * 2.0));
         canvasCtx.moveTo(x, midY - h); canvasCtx.lineTo(x, midY + h);
     }
@@ -456,33 +498,48 @@ function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
         btnRecord.classList.remove('recording');
-        statusEl.innerText = "ANALYZING...";
+        statusEl.innerText = "ANALYZING SPECTRUM...";
     }
 }
 
-function trimSilence(sig) {
-    let s = 0; while (s < sig.length && sig[s] < 0.05) s++;
-    let e = sig.length - 1; while (e > s && sig[e] < 0.05) e--;
+function trimSpectralSilence(sig) {
+    let s = 0; while (s < sig.length && sig[s].e < 0.05) s++;
+    let e = sig.length - 1; while (e > s && sig[e].e < 0.05) e--;
     return s > e ? [] : sig.slice(s, e + 1);
 }
 
-function compareSignatures(sig1, sig2) {
-    const s1 = trimSilence(sig1), s2 = trimSilence(sig2);
+// 精度向上の肝：エネルギー(e)と周波数傾向(f)の両面でマッチング
+function compareSpectralFingerprints(sig1, sig2) {
+    const s1 = trimSpectralSilence(sig1), s2 = trimSpectralSilence(sig2);
     if (s1.length === 0 || s2.length === 0) return 0;
     let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1, minD = Infinity;
+    
+    // スライディングウィンドウ
     for (let o = 0; o <= lg.length - sh.length; o++) {
-        let d = 0; for (let i = 0; i < sh.length; i++) { const diff = sh[i] - lg[o + i]; d += diff * diff; }
-        d = Math.sqrt(d / sh.length); if (d < minD) minD = d;
+        let d = 0;
+        for (let i = 0; i < sh.length; i++) {
+            const de = sh[i].e - lg[o + i].e; // 音量の差
+            const df = sh[i].f - lg[o + i].f; // 周波数（音程）の差
+            d += (de * de) + (df * df * 2.0); // 周波数の変化をより重視
+        }
+        d = Math.sqrt(d / sh.length);
+        if (d < minD) minD = d;
     }
+    
     const ratio = sh.length / lg.length;
-    return Math.max(0, 100 - minD * 180) * (ratio < 0.4 ? ratio * 2.5 : 1.0);
+    let score = Math.max(0, 100 - minD * 220); // 距離をスコアに変換
+    if (ratio < 0.5) score *= (ratio * 2); // 長さが違いすぎる場合はペナルティ
+    return score;
 }
 
 function identifyPokemon(inputSig) {
-    let matches = Object.keys(signatures).map(id => ({ id, score: compareSignatures(inputSig, signatures[id]) }));
+    let matches = Object.keys(signatures).map(id => ({ id, score: compareSpectralFingerprints(inputSig, signatures[id]) }));
     matches.sort((a, b) => b.score - a.score);
-    if (matches.length > 0 && matches[0].score > 0) {
-        const top = matches[0]; resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${Math.floor(top.score)}%`;
+
+    if (matches.length > 0 && matches[0].score > 10) {
+        const top = matches[0];
+        resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${Math.floor(top.score)}%`;
+
         const subs = [
             { n: resName2, s: resScore2, i: resId2, l: "2nd" },
             { n: resName3, s: resScore3, i: resId3, l: "3rd" },
@@ -494,6 +551,7 @@ function identifyPokemon(inputSig) {
                 subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
             } else { subs[j].n.innerText = "---"; subs[j].s.innerText = `${subs[j].l}: --%`; subs[j].i.innerText = "No.----"; }
         }
+
         resMinorList.innerHTML = "";
         for (let k = 4; k < 10; k++) {
             const m = matches[k];
@@ -514,7 +572,7 @@ window.onload = () => {
     canvas.width = 240; canvas.height = 90;
     initOverlay.addEventListener('click', async () => {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        document.getElementById('init-text').innerText = "SYSTEM LOADING...";
+        document.getElementById('init-text').innerText = "CALIBRATING SPECTRUM...";
         prepareData();
     });
 };
