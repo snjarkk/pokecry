@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>POKEMON Cry ID & Quiz</title>
+    <title>Pokémon Cry</title>
     <style>
         :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; --correct: #34c759; --wrong: #ff3b30; }
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
-        h1 { margin: 0; font-size: 16px; letter-spacing: 1px; }
+        h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
 
         .mode-tabs { display: flex; background: #1c1c1e; padding: 5px; gap: 5px; flex-shrink: 0; border-bottom: 1px solid #333; }
         .tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
@@ -53,12 +53,12 @@
         #btn-reg-add { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; }
         
         .reg-list-title { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        #reg-pokemon-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
-        .reg-item { background: #333; font-size: 9px; padding: 6px 8px; border-radius: 6px; color: #eee; display: flex; align-items: center; justify-content: space-between; border: 1px solid transparent; cursor: pointer; }
+        #reg-pokemon-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
+        .reg-item { background: #333; font-size: 8px; padding: 6px 4px; border-radius: 6px; color: #eee; display: flex; flex-direction: column; align-items: center; border: 1px solid transparent; cursor: pointer; text-align: center; }
         .reg-item:active { background: #444; }
         .reg-item.newest { border-color: var(--primary); }
-        .reg-item-name { font-weight: bold; font-size: 11px; flex: 1; margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .reg-item-del { color: #666; font-size: 14px; padding-left: 5px; }
+        .reg-item-id { font-weight: normal; opacity: 0.7; }
+        .reg-item-name { font-weight: bold; font-size: 10px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
         #btn-quiz-play.playing { border-color: var(--primary); }
@@ -81,16 +81,16 @@
 <body>
 
 <header>
-    <h1>POKEMON Cry Identification</h1>
+    <h1>Pokémon Cry</h1>
 </header>
 
 <div class="mode-tabs">
-    <div class="tab active" onclick="switchMode('id')">IDENTIFY</div>
-    <div class="tab" onclick="switchMode('quiz')">QUIZ</div>
+    <div class="tab" onclick="switchMode('id')">IDENTIFY</div>
+    <div class="tab active" onclick="switchMode('quiz')">QUIZ</div>
 </div>
 
 <main>
-    <div id="id-section" class="mode-section active">
+    <div id="id-section" class="mode-section">
         <div class="recorder-row">
             <div class="visualizer-container"><canvas id="visualizer"></canvas></div>
             <div id="btn-record"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></div>
@@ -114,13 +114,13 @@
         </div>
     </div>
 
-    <div id="quiz-section" class="mode-section">
+    <div id="quiz-section" class="mode-section active">
         <div class="quiz-reg-area">
             <div class="reg-input-row">
                 <input type="number" id="input-reg-id" placeholder="No. (例: 25)" min="1" max="649">
                 <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
             </div>
-            <div class="reg-list-title"><span>クイズ対象 (タップで削除)</span><span id="reg-count">0/20</span></div>
+            <div class="reg-list-title"><span>クイズ対象 (最大30匹 / タップで削除)</span><span id="reg-count">0/30</span></div>
             <div id="reg-pokemon-list"></div>
         </div>
         
@@ -143,7 +143,7 @@
     <div id="progress-percent" style="margin-top:8px; font-size:12px;">0%</div>
 </div>
 
-<footer>&copy; Pokemon Cry ID System</footer>
+<footer>&copy; Pokémon Cry System</footer>
 
 <script>
 const POKEMON_DB = {
@@ -376,7 +376,6 @@ function switchMode(mode) {
     }
 }
 
-// クイズ登録・UI更新
 function addPokemonToQuiz() {
     const input = document.getElementById('input-reg-id');
     let id = input.value.trim().padStart(4, '0');
@@ -384,7 +383,7 @@ function addPokemonToQuiz() {
     const idx = registeredQuizIds.indexOf(id);
     if (idx !== -1) registeredQuizIds.splice(idx, 1);
     registeredQuizIds.push(id);
-    if (registeredQuizIds.length > 20) registeredQuizIds.shift();
+    if (registeredQuizIds.length > 30) registeredQuizIds.shift(); // 30匹まで拡張
     renderRegisteredList();
     input.value = "";
     updateQuizUI();
@@ -407,17 +406,16 @@ function renderRegisteredList() {
         const item = document.createElement('div');
         item.className = 'reg-item' + (i === registeredQuizIds.length - 1 ? ' newest' : '');
         item.onclick = () => removePokemonFromQuiz(id);
-        item.innerHTML = `<span>${id}</span><span class="reg-item-name">${POKEMON_DB[id].name}</span><span class="reg-item-del">×</span>`;
+        item.innerHTML = `<span class="reg-item-id">${id}</span><span class="reg-item-name">${POKEMON_DB[id].name}</span>`;
         listEl.appendChild(item);
     });
-    countEl.innerText = `${registeredQuizIds.length}/20`;
+    countEl.innerText = `${registeredQuizIds.length}/30`;
 }
 
 function updateQuizUI() {
     const btnPlay = document.getElementById('btn-quiz-play');
     const choiceBtns = document.querySelectorAll('.choice-btn');
     const feedback = document.getElementById('quiz-feedback');
-    
     if (registeredQuizIds.length < 3) {
         btnPlay.classList.add('disabled');
         choiceBtns.forEach(b => { b.classList.add('disabled'); b.innerText = "---"; });
@@ -426,7 +424,10 @@ function updateQuizUI() {
     } else {
         btnPlay.classList.remove('disabled');
         choiceBtns.forEach(b => b.classList.remove('disabled'));
-        if (feedback.innerText === "3匹以上登録してください") feedback.innerText = "準備完了！";
+        if (feedback.innerText === "3匹以上登録してください") {
+            feedback.innerText = "準備完了！";
+            nextQuiz();
+        }
         if (quizCorrectId === "") nextQuiz();
     }
 }
@@ -471,9 +472,8 @@ async function playQuizCry() {
 function checkAnswer(index) {
     if (registeredQuizIds.length < 3 || document.getElementById('btn-next-quiz').style.display === 'block') return;
     const choiceButtons = document.querySelectorAll('.choice-btn');
-    const selectedId = quizChoices[index];
     const feedback = document.getElementById('quiz-feedback');
-    if (selectedId === quizCorrectId) {
+    if (quizChoices[index] === quizCorrectId) {
         choiceButtons[index].classList.add('correct');
         feedback.innerText = "CORRECT! ✨"; feedback.style.color = "var(--correct)";
     } else {
