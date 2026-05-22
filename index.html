@@ -5,50 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKEMON CRY ID</title>
     <style>
-        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #8e8e93; }
+        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; --dimtext: #777777; }
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background: #1c1c1e; color: var(--primary); padding: 12px; text-align: center; border-bottom: 1px solid #333; }
-        h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
+        header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
+        h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
 
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; padding-top: 5px; overflow-y: auto; }
+        main { flex: 1; display: flex; flex-direction: row; overflow: hidden; }
         
-        .recorder-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 170px; width: 100%; flex-shrink: 0; position: relative; }
+        /* 左側：波形エリア */
+        .wave-section { width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a0a0a; border-right: 1px solid #2c2c2e; position: relative; flex-shrink: 0; }
+        #visualizer { width: 100%; height: 80%; opacity: 0.8; }
+        .wave-label { position: absolute; bottom: 10px; font-size: 9px; color: #444; transform: rotate(-90deg); white-space: nowrap; }
 
-        #visualizer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; z-index: 0; opacity: 0.4; pointer-events: none; }
-
-        #btn-record { width: 100px; height: 100px; border-radius: 50%; background: var(--primary); border: 5px solid #333; box-shadow: 0 0 20px rgba(255, 69, 58, 0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, box-shadow 0.3s; -webkit-tap-highlight-color: transparent; z-index: 1; position: relative; }
+        /* 右側：メインコンテンツ */
+        .content-section { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
+        
+        .recorder-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px; width: 100%; margin-bottom: 10px; }
+        #btn-record { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 5px solid #333; box-shadow: 0 0 20px rgba(255, 69, 58, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
         #btn-record:active { transform: scale(0.92); }
-        #btn-record.recording { box-shadow: 0 0 40px rgba(255, 69, 58, 0.6); }
+        #btn-record.recording { box-shadow: 0 0 30px rgba(255, 69, 58, 0.5); border-color: #444; }
+        #status { margin-top: 8px; font-size: 11px; font-weight: bold; color: var(--subtext); text-transform: uppercase; }
         
-        #status { margin-top: 10px; font-size: 13px; font-weight: bold; color: var(--subtext); height: 18px; z-index: 1; text-transform: uppercase; }
-        
-        #result-container { margin-top: 5px; width: 100%; max-width: 420px; display: none; }
-        .result-card { background: var(--card); padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; border: 1px solid #333; margin-bottom: 8px; }
-        .pokemon-id { color: var(--subtext); font-size: 11px; margin-bottom: 1px; }
-        .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 10px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
+        #result-container { width: 100%; max-width: 320px; display: none; }
+        .result-card { background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid #333; margin-bottom: 8px; }
+        .pokemon-id { color: #cccccc; font-size: 11px; margin-bottom: 2px; font-weight: bold; }
+        .pokemon-name { font-size: 24px; font-weight: bold; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .match-score { font-size: 11px; background: #3a3a3c; padding: 2px 10px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
 
-        .sub-results { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
-        .sub-card { background: var(--card); padding: 8px; border-radius: 10px; display: flex; flex-direction: column; align-items: stretch; border: 1px solid #2c2c2e; }
-        .sub-rank-score { font-size: 10px; color: var(--subtext); background: #2c2c2e; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; text-align: center; }
-        .sub-info { display: flex; flex-direction: row; align-items: center; gap: 5px; overflow: hidden; }
-        .sub-id { font-size: 10px; color: #666; flex-shrink: 0; }
-        .sub-name { font-weight: bold; font-size: 19px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; display: flex; align-items: center; }
+        .sub-results { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; }
+        .sub-card { background: var(--card); padding: 6px 10px; border-radius: 8px; display: flex; flex-direction: row; align-items: center; border: 1px solid #2c2c2e; justify-content: space-between; }
+        .sub-rank-score { font-size: 10px; color: #ffffff; background: #ff453a; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; min-width: 50px; text-align: center; }
+        .sub-info { display: flex; flex-direction: row; align-items: center; gap: 6px; flex: 1; overflow: hidden; }
+        .sub-id { font-size: 10px; color: #bbbbbb; flex-shrink: 0; font-weight: bold; }
+        .sub-name { font-weight: bold; font-size: 18px; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
 
-        #minor-results { margin-top: 10px; padding: 10px; background: #1c1c1e; border-radius: 10px; border: 1px solid #2c2c2e; }
-        #minor-results b { font-size: 11px; color: #666; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 18px; color: #bbb; font-weight: bold; }
+        #minor-results { margin-top: 10px; padding: 8px; background: #1c1c1e; border-radius: 10px; border: 1px solid #2c2c2e; width: 100%; box-sizing: border-box; }
+        #minor-results b { font-size: 10px; color: #888; display: block; margin-bottom: 6px; text-align: center; }
+        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 16px; color: #dddddd; font-weight: bold; }
         .minor-item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; border-bottom: 1px solid #2c2c2e; padding-bottom: 2px; }
-        .minor-rank { font-size: 11px; color: #555; margin-right: 4px; width: 18px; text-align: right; }
-        .minor-id { font-size: 11px; color: #444; margin-right: 5px; font-weight: normal; }
+        .minor-rank { font-size: 10px; color: #ffffff; margin-right: 4px; width: 16px; text-align: right; background: #444; border-radius: 2px; padding: 0 2px; }
+        .minor-id { font-size: 10px; color: #aaaaaa; margin-right: 5px; font-weight: bold; }
 
-        footer { padding: 10px; text-align: center; font-size: 10px; color: #444; flex-shrink: 0; }
+        footer { padding: 8px; text-align: center; font-size: 9px; color: #444; flex-shrink: 0; }
         
         #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        #progress-container { width: 80%; text-align: center; }
-        #progress-bar { width: 100%; height: 6px; background: #1c1c1e; border-radius: 3px; margin-top: 15px; overflow: hidden; }
+        #progress-bar { width: 80%; height: 4px; background: #1c1c1e; border-radius: 2px; margin-top: 15px; overflow: hidden; }
         #progress-inner { width: 0%; height: 100%; background: var(--primary); transition: width 0.1s; }
-        #progress-percent { margin-top: 8px; font-size: 18px; font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -58,64 +60,68 @@
 </header>
 
 <main>
-    <div class="recorder-section">
+    <div class="wave-section">
         <canvas id="visualizer"></canvas>
-        <div id="btn-record">
-            <svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-        </div>
-        <div id="status">TAP AND HOLD</div>
+        <div class="wave-label">AUDIO WAVEFORM</div>
     </div>
+    
+    <div class="content-section">
+        <div class="recorder-container">
+            <div id="btn-record">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </div>
+            <div id="status">TAP AND HOLD</div>
+        </div>
 
-    <div id="result-container">
-        <div class="result-card">
-            <div class="pokemon-id" id="res-id">No.0001</div>
-            <div class="pokemon-name" id="res-name">フシギダネ</div>
-            <div class="match-score" id="res-score">一致度: --%</div>
-        </div>
-        <div class="sub-results">
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-2">No.----</span>
-                    <span class="sub-name" id="res-name-2">---</span>
+        <div id="result-container">
+            <div class="result-card">
+                <div class="pokemon-id" id="res-id">No.----</div>
+                <div class="pokemon-name" id="res-name">---</div>
+                <div class="match-score" id="res-score">MATCH: --%</div>
+            </div>
+            <div class="sub-results">
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-2">No.----</span>
+                        <span class="sub-name" id="res-name-2">---</span>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-3">No.----</span>
+                        <span class="sub-name" id="res-name-3">---</span>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-4">4th: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-4">No.----</span>
+                        <span class="sub-name" id="res-name-4">---</span>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-rank-score" id="res-score-5">5th: --%</div>
+                    <div class="sub-info">
+                        <span class="sub-id" id="res-id-5">No.----</span>
+                        <span class="sub-name" id="res-name-5">---</span>
+                    </div>
                 </div>
             </div>
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-3">No.----</span>
-                    <span class="sub-name" id="res-name-3">---</span>
-                </div>
+            
+            <div id="minor-results">
+                <b>RANKINGS 6 - 10</b>
+                <div id="res-minor-list"></div>
             </div>
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-4">4th: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-4">No.----</span>
-                    <span class="sub-name" id="res-name-4">---</span>
-                </div>
-            </div>
-            <div class="sub-card">
-                <div class="sub-rank-score" id="res-score-5">5th: --%</div>
-                <div class="sub-info">
-                    <span class="sub-id" id="res-id-5">No.----</span>
-                    <span class="sub-name" id="res-name-5">---</span>
-                </div>
-            </div>
-        </div>
-        
-        <div id="minor-results">
-            <b>Ranks 6 - 10</b>
-            <div id="res-minor-list"></div>
         </div>
     </div>
 </main>
 
 <div id="init-overlay">
-    <div id="init-text" style="font-size: 18px; font-weight: bold; letter-spacing: 2px;">TAP TO START</div>
-    <div id="progress-container">
-        <div id="progress-bar"><div id="progress-inner"></div></div>
-        <div id="progress-percent">0%</div>
-    </div>
+    <div id="init-text" style="font-size: 16px; font-weight: bold; letter-spacing: 2px;">START SYSTEM</div>
+    <div id="progress-bar"><div id="progress-inner"></div></div>
+    <div id="progress-percent" style="margin-top:8px; font-size:12px;">0%</div>
 </div>
 
 <footer>
@@ -133,8 +139,8 @@ const POKEMON_DB = {
   "0019": { name: "コラッタ", ext: "wav" }, "0020": { name: "ラッタ", ext: "wav" }, "0021": { name: "オニスズメ", ext: "wav" },
   "0022": { name: "オニドリル", ext: "wav" }, "0023": { name: "アーボ", ext: "wav" }, "0024": { name: "アーボック", ext: "wav" },
   "0025": { name: "ピカチュウ", ext: "wav" }, "0026": { name: "ライチュウ", ext: "wav" }, "0027": { name: "サンド", ext: "wav" },
-  "0028": { name: "サンドパン", ext: "wav" }, "0029": { name: "ニドラン♀", ext: "wav" }, "0030": { name: "ニドリーナ", ext: "wav" },
-  "0031": { name: "ニドクイン", ext: "wav" }, "0032": { name: "ニドラン♂", ext: "wav" }, "0033": { name: "ニドリーノ", ext: "wav" },
+  "0028": { name: "サンドパン", ext: "wav" }, "0029": { name: "ニドラン\u2640", ext: "wav" }, "0030": { name: "ニドリーナ", ext: "wav" },
+  "0031": { name: "ニドクイン", ext: "wav" }, "0032": { name: "ニドラン\u2642", ext: "wav" }, "0033": { name: "ニドリーノ", ext: "wav" },
   "0034": { name: "ニドキング", ext: "wav" }, "0035": { name: "ピッピ", ext: "wav" }, "0036": { name: "ピクシー", ext: "wav" },
   "0037": { name: "ロコン", ext: "wav" }, "0038": { name: "キュウコン", ext: "wav" }, "0039": { name: "プリン", ext: "wav" },
   "0040": { name: "プクリン", ext: "wav" }, "0041": { name: "ズバット", ext: "wav" }, "0042": { name: "ゴルバット", ext: "wav" },
@@ -201,7 +207,7 @@ const POKEMON_DB = {
   "0223": { name: "テッポウオ", ext: "wav" }, "0224": { name: "オクタン", ext: "wav" }, "0225": { name: "デリバード", ext: "wav" },
   "0226": { name: "マンタイン", ext: "wav" }, "0227": { name: "エアームド", ext: "wav" }, "0228": { name: "デルビル", ext: "wav" },
   "0229": { name: "ヘルガー", ext: "wav" }, "0230": { name: "キングドラ", ext: "wav" }, "0231": { name: "ゴマゾウ", ext: "wav" },
-  "0232": { name: "ドンファン", ext: "wav" }, "0233": { name: "ポリゴン２", ext: "wav" }, "0234": { name: "オドシシ", ext: "wav" },
+  "0232": { name: "ドンファン", ext: "wav" }, "0233": { name: "ポリゴン\uff12", ext: "wav" }, "0234": { name: "オドシシ", ext: "wav" },
   "0235": { name: "ドーブル", ext: "wav" }, "0236": { name: "バルキー", ext: "wav" }, "0237": { name: "カポエラー", ext: "wav" },
   "0238": { name: "ムチュール", ext: "wav" }, "0239": { name: "エレキッド", ext: "wav" }, "0240": { name: "ブビィ", ext: "wav" },
   "0241": { name: "ミルタンク", ext: "wav" }, "0242": { name: "ハピナス", ext: "wav" }, "0243": { name: "ライコウ", ext: "wav" },
@@ -281,7 +287,7 @@ const POKEMON_DB = {
   "0463": { name: "ベロベルト", ext: "mp3" }, "0464": { name: "ドサイドン", ext: "mp3" }, "0465": { name: "モジャンボ", ext: "mp3" },
   "0466": { name: "エレキブル", ext: "mp3" }, "0467": { name: "ブーバーン", ext: "mp3" }, "0468": { name: "トゲキッス", ext: "mp3" },
   "0469": { name: "メガヤンマ", ext: "mp3" }, "0470": { name: "リーフィア", ext: "mp3" }, "0471": { name: "グレイシア", ext: "mp3" },
-  "0472": { name: "グライオン", ext: "mp3" }, "0473": { name: "マンムー", ext: "mp3" }, "0474": { name: "ポリゴンＺ", ext: "mp3" },
+  "0472": { name: "グライオン", ext: "mp3" }, "0473": { name: "マンムー", ext: "mp3" }, "0474": { name: "ポリゴン\uff3a", ext: "mp3" },
   "0475": { name: "エルレイド", ext: "mp3" }, "0476": { name: "ダイノーズ", ext: "mp3" }, "0477": { name: "ヨノワール", ext: "mp3" },
   "0478": { name: "ユキメノコ", ext: "mp3" }, "0479": { name: "ロトム", ext: "mp3" }, "0480": { name: "ユクシー", ext: "mp3" },
   "0481": { name: "エムリット", ext: "mp3" }, "0482": { name: "アグノム", ext: "mp3" }, "0483": { name: "ディアルガ", ext: "mp3" },
@@ -344,12 +350,11 @@ const POKEMON_DB = {
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
-
-let audioCtx;
-let signatures = {}; 
 const DB_NAME = 'PokemonCryDB_v2'; 
 const STORE_NAME = 'signatures';
 
+let audioCtx;
+let signatures = {}; 
 const statusEl = document.getElementById('status');
 const btnRecord = document.getElementById('btn-record');
 const resultContainer = document.getElementById('result-container');
@@ -360,33 +365,24 @@ const progressInner = document.getElementById('progress-inner');
 const progressPercent = document.getElementById('progress-percent');
 const initOverlay = document.getElementById('init-overlay');
 
-const resName2 = document.getElementById('res-name-2');
-const resScore2 = document.getElementById('res-score-2');
-const resId2 = document.getElementById('res-id-2');
-const resName3 = document.getElementById('res-name-3');
-const resScore3 = document.getElementById('res-score-3');
-const resId3 = document.getElementById('res-id-3');
-const resName4 = document.getElementById('res-name-4');
-const resScore4 = document.getElementById('res-score-4');
-const resId4 = document.getElementById('res-id-4');
-const resName5 = document.getElementById('res-name-5');
-const resScore5 = document.getElementById('res-score-5');
-const resId5 = document.getElementById('res-id-5');
+const resName2 = document.getElementById('res-name-2'), resScore2 = document.getElementById('res-score-2'), resId2 = document.getElementById('res-id-2');
+const resName3 = document.getElementById('res-name-3'), resScore3 = document.getElementById('res-score-3'), resId3 = document.getElementById('res-id-3');
+const resName4 = document.getElementById('res-name-4'), resScore4 = document.getElementById('res-score-4'), resId4 = document.getElementById('res-id-4');
+const resName5 = document.getElementById('res-name-5'), resScore5 = document.getElementById('res-score-5'), resId5 = document.getElementById('res-id-5');
 const resMinorList = document.getElementById('res-minor-list');
 
 const canvas = document.getElementById('visualizer');
 const canvasCtx = canvas.getContext('2d');
 let analyser;
-let dataArray;
+let waveDataArray;
 let animationId;
+let waveHistory = [];
 
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
         request.onupgradeneeded = e => {
-            if (!e.target.result.objectStoreNames.contains(STORE_NAME)) {
-                e.target.result.createObjectStore(STORE_NAME);
-            }
+            if (!e.target.result.objectStoreNames.contains(STORE_NAME)) e.target.result.createObjectStore(STORE_NAME);
         };
         request.onsuccess = e => resolve(e.target.result);
         request.onerror = e => reject(e);
@@ -400,15 +396,12 @@ async function extractSignature(audioBuffer) {
     let max = 0;
     for (let i = 0; i < data.length; i += step) {
         let sum = 0;
-        for (let j = 0; j < step && (i + j) < data.length; j++) {
-            sum += data[i + j] * data[i + j];
-        }
+        for (let j = 0; j < step && (i + j) < data.length; j++) sum += data[i + j] * data[i + j];
         const val = Math.sqrt(sum / step);
         if (val > max) max = val;
         sig.push(val);
     }
-    if (max > 0) return sig.map(v => v / max);
-    return sig;
+    return max > 0 ? sig.map(v => v / max) : sig;
 }
 
 async function prepareData() {
@@ -418,9 +411,8 @@ async function prepareData() {
 
     for (const id of ids) {
         const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
         const cached = await new Promise(r => {
-            const req = store.get(id);
+            const req = tx.objectStore(STORE_NAME).get(id);
             req.onsuccess = () => r(req.result);
         });
 
@@ -428,19 +420,13 @@ async function prepareData() {
             signatures[id] = cached;
         } else {
             try {
-                const url = `${BASE_URL}${id}.${POKEMON_DB[id].ext}`;
-                const resp = await fetch(url);
+                const resp = await fetch(`${BASE_URL}${id}.${POKEMON_DB[id].ext}`);
                 if (!resp.ok) throw new Error();
-                const arrayBuffer = await resp.arrayBuffer();
-                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
                 const sig = await extractSignature(audioBuffer);
-                
-                const saveTx = db.transaction(STORE_NAME, 'readwrite');
-                saveTx.objectStore(STORE_NAME).put(sig, id);
+                db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(sig, id);
                 signatures[id] = sig;
-            } catch (e) {
-                console.warn(`Failed to load ${id}`);
-            }
+            } catch (e) { console.warn(`Load failed: ${id}`); }
         }
         loadedCount++;
         const percent = Math.floor((loadedCount / ids.length) * 100);
@@ -450,65 +436,60 @@ async function prepareData() {
     initOverlay.style.display = 'none';
 }
 
-let mediaRecorder;
-let recordedChunks = [];
-let source;
+let mediaRecorder, recordedChunks = [];
 
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    
     analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    source = audioCtx.createMediaStreamSource(stream);
-    source.connect(analyser);
-    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    analyser.fftSize = 2048;
+    audioCtx.createMediaStreamSource(stream).connect(analyser);
+    waveDataArray = new Uint8Array(analyser.frequencyBinCount);
+    waveHistory = [];
 
     mediaRecorder = new MediaRecorder(stream);
     recordedChunks = [];
-
     mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
     mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach(t => t.stop());
         cancelAnimationFrame(animationId);
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        const blob = new Blob(recordedChunks);
-        const arrayBuffer = await blob.arrayBuffer();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        const inputSig = await extractSignature(audioBuffer);
-        identifyPokemon(inputSig);
+        const audioBuffer = await audioCtx.decodeAudioData(await (new Blob(recordedChunks)).arrayBuffer());
+        identifyPokemon(await extractSignature(audioBuffer));
     };
 
     mediaRecorder.start();
     btnRecord.classList.add('recording');
     statusEl.innerText = "LISTENING...";
     resultContainer.style.display = 'none';
-    draw();
+    drawWave();
 }
 
-function draw() {
-    animationId = requestAnimationFrame(draw);
-    analyser.getByteFrequencyData(dataArray);
+function drawWave() {
+    animationId = requestAnimationFrame(drawWave);
+    analyser.getByteTimeDomainData(waveDataArray);
     
-    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    
-    canvasCtx.beginPath();
-    for(let i = 0; i < dataArray.length; i++) {
-        const angle = (i / dataArray.length) * Math.PI * 2;
-        const radius = 40 + (dataArray[i] / 255) * 40;
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
-        if(i === 0) canvasCtx.moveTo(x, y);
-        else canvasCtx.lineTo(x, y);
+    // 現在の最大振幅を履歴に追加
+    let max = 0;
+    for(let i=0; i<waveDataArray.length; i++) {
+        const v = Math.abs(waveDataArray[i] - 128);
+        if(v > max) max = v;
     }
-    canvasCtx.closePath();
+    waveHistory.push(max);
+
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasCtx.beginPath();
     canvasCtx.strokeStyle = '#ff453a';
     canvasCtx.lineWidth = 2;
+
+    const midY = canvas.height / 2;
+    for(let i=0; i<waveHistory.length; i++) {
+        const x = (i / waveHistory.length) * canvas.width;
+        const h = (waveHistory[i] / 128) * (canvas.height / 2);
+        canvasCtx.moveTo(x, midY - h);
+        canvasCtx.lineTo(x, midY + h);
+    }
     canvasCtx.stroke();
 }
 
@@ -521,101 +502,66 @@ function stopRecording() {
 }
 
 function trimSilence(sig) {
-    let start = 0;
-    while (start < sig.length && sig[start] < 0.05) start++;
-    let end = sig.length - 1;
-    while (end > start && sig[end] < 0.05) end--;
-    if (start > end) return [];
-    return sig.slice(start, end + 1);
+    let s = 0; while (s < sig.length && sig[s] < 0.05) s++;
+    let e = sig.length - 1; while (e > s && sig[e] < 0.05) e--;
+    return s > e ? [] : sig.slice(s, e + 1);
 }
 
 function compareSignatures(sig1, sig2) {
-    const s1 = trimSilence(sig1);
-    const s2 = trimSilence(sig2);
+    const s1 = trimSilence(sig1), s2 = trimSilence(sig2);
     if (s1.length === 0 || s2.length === 0) return 0;
-    
-    let s_short = s1.length < s2.length ? s1 : s2;
-    let s_long = s1.length < s2.length ? s2 : s1;
-    let minDistance = Infinity;
-    
-    const limit = s_long.length - s_short.length;
-    for (let offset = 0; offset <= limit; offset++) {
-        let dist = 0;
-        for (let i = 0; i < s_short.length; i++) {
-            const d = s_short[i] - s_long[offset + i];
-            dist += d * d;
-        }
-        dist = Math.sqrt(dist / s_short.length);
-        if (dist < minDistance) minDistance = dist;
+    let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1;
+    let minD = Infinity;
+    for (let o = 0; o <= lg.length - sh.length; o++) {
+        let d = 0; for (let i = 0; i < sh.length; i++) { const diff = sh[i] - lg[o + i]; d += diff * diff; }
+        d = Math.sqrt(d / sh.length); if (d < minD) minD = d;
     }
-    
-    const lengthRatio = s_short.length / s_long.length;
-    const penalty = lengthRatio < 0.4 ? lengthRatio * 2.5 : 1.0;
-    let score = Math.max(0, 100 - minDistance * 180) * penalty;
-    return score;
+    const ratio = sh.length / lg.length;
+    return Math.max(0, 100 - minD * 180) * (ratio < 0.4 ? ratio * 2.5 : 1.0);
 }
 
 function identifyPokemon(inputSig) {
-    let allMatches = [];
-    for (const id in signatures) {
-        const score = compareSignatures(inputSig, signatures[id]);
-        allMatches.push({ id, score });
-    }
-    allMatches.sort((a, b) => b.score - a.score);
+    let matches = Object.keys(signatures).map(id => ({ id, score: compareSignatures(inputSig, signatures[id]) }));
+    matches.sort((a, b) => b.score - a.score);
 
-    if (allMatches.length > 0 && allMatches[0].score > 0) {
-        const top1 = allMatches[0];
-        resId.innerText = `No.${top1.id}`;
-        resName.innerText = POKEMON_DB[top1.id].name;
-        resScore.innerText = `MATCH: ${Math.floor(top1.score)}%`;
+    if (matches.length > 0 && matches[0].score > 0) {
+        const top = matches[0];
+        resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${Math.floor(top.score)}%`;
 
-        const subFields = [
-            { name: resName2, score: resScore2, id: resId2, label: "2nd" },
-            { name: resName3, score: resScore3, id: resId3, label: "3rd" },
-            { name: resName4, score: resScore4, id: resId4, label: "4th" },
-            { name: resName5, score: resScore5, id: resId5, label: "5th" }
+        const subs = [
+            { n: resName2, s: resScore2, i: resId2, l: "2nd" },
+            { n: resName3, s: resScore3, i: resId3, l: "3rd" },
+            { n: resName4, s: resScore4, i: resId4, l: "4th" },
+            { n: resName5, s: resScore5, i: resId5, l: "5th" }
         ];
-
-        for (let i = 0; i < subFields.length; i++) {
-            const match = allMatches[i + 1];
-            if (match && match.score > 0) {
-                subFields[i].name.innerText = POKEMON_DB[match.id].name;
-                subFields[i].score.innerText = `${subFields[i].label}: ${Math.floor(match.score)}%`;
-                subFields[i].id.innerText = `No.${match.id}`;
-            } else {
-                subFields[i].name.innerText = "---";
-                subFields[i].score.innerText = `${subFields[i].label}: --%`;
-                subFields[i].id.innerText = "No.----";
-            }
+        for (let j = 0; j < subs.length; j++) {
+            const m = matches[j + 1];
+            if (m && m.score > 0) {
+                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
+            } else { subs[j].n.innerText = "---"; subs[j].s.innerText = `${subs[j].l}: --%`; subs[j].i.innerText = "No.----"; }
         }
 
         resMinorList.innerHTML = "";
-        for (let i = 5; i < 10; i++) {
-            const match = allMatches[i];
-            if (match && match.score > 0) {
-                const div = document.createElement('div');
-                div.className = 'minor-item';
-                div.innerHTML = `<span class="minor-rank">${i + 1}.</span><span class="minor-id">No.${match.id}</span>${POKEMON_DB[match.id].name}`;
-                resMinorList.appendChild(div);
+        for (let k = 5; k < 10; k++) {
+            const m = matches[k];
+            if (m && m.score > 0) {
+                const item = document.createElement('div');
+                item.className = 'minor-item';
+                item.innerHTML = `<span class="minor-rank">${k + 1}</span><span class="minor-id">No.${m.id}</span>${POKEMON_DB[m.id].name}`;
+                resMinorList.appendChild(item);
             }
         }
-        if (resMinorList.innerHTML === "") resMinorList.innerText = "---";
-
-        resultContainer.style.display = 'block';
-        statusEl.innerText = "ID COMPLETE";
-    } else {
-        statusEl.innerText = "COULD NOT ID";
-    }
+        resultContainer.style.display = 'block'; statusEl.innerText = "ID COMPLETE";
+    } else { statusEl.innerText = "COULD NOT ID"; }
 }
 
 btnRecord.addEventListener('mousedown', startRecording);
 btnRecord.addEventListener('mouseup', stopRecording);
-btnRecord.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); });
-btnRecord.addEventListener('touchend', (e) => { e.preventDefault(); stopRecording(); });
+btnRecord.addEventListener('touchstart', e => { e.preventDefault(); startRecording(); });
+btnRecord.addEventListener('touchend', e => { e.preventDefault(); stopRecording(); });
 
 window.onload = () => {
-    canvas.width = 200;
-    canvas.height = 200;
+    canvas.width = 80; canvas.height = 400;
     initOverlay.addEventListener('click', async () => {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         document.getElementById('init-text').innerText = "LOADING DATA...";
