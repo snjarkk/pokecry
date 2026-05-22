@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POKEMON CRY ID</title>
     <style>
-        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; --accent: #0a84ff; }
+        :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; }
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
         h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
 
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
         
-        /* 録音エリア：波形とボタンを横並びに */
-        .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 15px; width: 100%; min-height: 120px; margin-bottom: 5px; }
-        .visualizer-container { width: 100px; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; position: relative; }
-        #visualizer { width: 100%; height: 100%; }
+        /* 録音エリア：波形を広げ、ボタンを右に */
+        .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
+        .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
+        #visualizer { width: 100%; height: 100%; display: block; }
         
         #btn-record { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 5px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
         #btn-record:active { transform: scale(0.92); }
@@ -25,25 +25,27 @@
         
         #result-container { width: 100%; max-width: 340px; display: none; }
         .result-card { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--primary); margin-bottom: 10px; box-shadow: 0 4px 20px rgba(255, 69, 58, 0.1); }
-        .pokemon-id { color: #ffffff; font-size: 12px; margin-bottom: 2px; font-weight: bold; opacity: 0.9; }
+        .pokemon-id { color: #ffffff; font-size: 12px; margin-bottom: 2px; font-weight: bold; }
         .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 12px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
 
-        /* 2位〜4位：強調表示（赤以外） */
+        /* 2位〜4位：強調表示 */
         .sub-results { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; margin-bottom: 10px; }
         .sub-card { background: var(--card); padding: 8px 12px; border-radius: 8px; display: flex; flex-direction: row; align-items: center; border: 1px solid #333; justify-content: space-between; }
         .sub-rank-score { font-size: 10px; color: #ffffff; background: #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; min-width: 55px; text-align: center; }
         .sub-info { display: flex; flex-direction: row; align-items: center; gap: 8px; flex: 1; overflow: hidden; }
-        .sub-id { font-size: 11px; color: #ffffff; flex-shrink: 0; font-weight: bold; }
+        .sub-id { font-size: 11px; color: #ffffff; font-weight: bold; flex-shrink: 0; }
         .sub-name { font-weight: bold; font-size: 20px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
 
-        /* 5位〜10位：簡略表示 */
+        /* 5位〜10位：2行表示（番号上・名前下） */
         #minor-results { padding: 10px; background: #151517; border-radius: 10px; border: 1px solid #2c2c2e; width: 100%; box-sizing: border-box; }
-        #minor-results b { font-size: 10px; color: #666; display: block; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
-        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 15px; font-size: 17px; color: #dddddd; font-weight: bold; }
-        .minor-item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; border-bottom: 1px solid #252527; padding-bottom: 2px; }
-        .minor-rank { font-size: 11px; color: #ffffff; margin-right: 6px; width: 24px; text-align: center; background: #333; border-radius: 3px; flex-shrink: 0; }
-        .minor-id { font-size: 11px; color: #ffffff; margin-right: 6px; font-weight: bold; flex-shrink: 0; }
+        #minor-results b { font-size: 10px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
+        #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; }
+        .minor-item { display: flex; flex-direction: row; align-items: flex-start; gap: 6px; border-bottom: 1px solid #252527; padding-bottom: 4px; overflow: hidden; }
+        .minor-rank-box { width: 22px; height: 32px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff; flex-shrink: 0; }
+        .minor-content { display: flex; flex-direction: column; overflow: hidden; }
+        .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
+        .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         footer { padding: 10px; text-align: center; font-size: 10px; color: #333; flex-shrink: 0; }
         
@@ -230,7 +232,7 @@ const POKEMON_DB = {
   "0328": { name: "ナックラー", ext: "wav" }, "0329": { name: "ビブラーバ", ext: "wav" }, "0330": { name: "フライゴン", ext: "wav" },
   "0331": { name: "サボネア", ext: "wav" }, "0332": { name: "ノクタス", ext: "wav" }, "0333": { name: "チルット", ext: "wav" },
   "0334": { name: "チルタリス", ext: "wav" }, "0335": { name: "ザングース", ext: "wav" }, "0336": { name: "ハブネーク", ext: "wav" },
-  "0337": { name: "ルナーtーン", ext: "wav" }, "0338": { name: "ソルロック", ext: "wav" }, "0339": { name: "ドジョッチ", ext: "wav" },
+  "0337": { name: "ルナトーン", ext: "wav" }, "0338": { name: "ソルロック", ext: "wav" }, "0339": { name: "ドジョッチ", ext: "wav" },
   "0340": { name: "ナマズン", ext: "wav" }, "0341": { name: "ヘイガニ", ext: "wav" }, "0342": { name: "シザリガー", ext: "wav" },
   "0343": { name: "ヤジロン", ext: "wav" }, "0344": { name: "ネンドール", ext: "wav" }, "0345": { name: "リリーラ", ext: "wav" },
   "0346": { name: "ユレイドル", ext: "wav" }, "0347": { name: "アノプス", ext: "wav" }, "0348": { name: "アーマルド", ext: "wav" },
@@ -405,6 +407,7 @@ async function prepareData() {
 }
 
 let mediaRecorder, recordedChunks = [];
+let isDrawing = false;
 
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -418,16 +421,18 @@ async function startRecording() {
     mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
     mediaRecorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
-        cancelAnimationFrame(animationId); // 描画ループを停止
+        isDrawing = false; // 描画フラグをオフにする
         const audioBuffer = await audioCtx.decodeAudioData(await (new Blob(recordedChunks)).arrayBuffer());
         identifyPokemon(await extractSignature(audioBuffer));
     };
     mediaRecorder.start();
+    isDrawing = true;
     btnRecord.classList.add('recording'); statusEl.innerText = "LISTENING...";
     resultContainer.style.display = 'none'; drawWave();
 }
 
 function drawWave() {
+    if (!isDrawing) return; // フラグがオフならループを停止
     animationId = requestAnimationFrame(drawWave);
     analyser.getByteTimeDomainData(waveDataArray);
     let max = 0;
@@ -493,7 +498,7 @@ function identifyPokemon(inputSig) {
             const m = matches[k];
             if (m && m.score > 0) {
                 const item = document.createElement('div'); item.className = 'minor-item';
-                item.innerHTML = `<span class="minor-rank">${k + 1}</span><span class="minor-id">No.${m.id}</span>${POKEMON_DB[m.id].name}`;
+                item.innerHTML = `<div class="minor-rank-box">${k + 1}</div><div class="minor-content"><div class="minor-id">No.${m.id}</div><div class="minor-name">${POKEMON_DB[m.id].name}</div></div>`;
                 resMinorList.appendChild(item);
             }
         }
@@ -505,7 +510,7 @@ btnRecord.addEventListener('mousedown', startRecording); btnRecord.addEventListe
 btnRecord.addEventListener('touchstart', e => { e.preventDefault(); startRecording(); }); btnRecord.addEventListener('touchend', e => { e.preventDefault(); stopRecording(); });
 
 window.onload = () => {
-    canvas.width = 100; canvas.height = 90;
+    canvas.width = 240; canvas.height = 90;
     initOverlay.addEventListener('click', async () => {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         document.getElementById('init-text').innerText = "SYSTEM LOADING...";
