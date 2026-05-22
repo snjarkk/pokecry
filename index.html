@@ -71,6 +71,19 @@
                 <div class="sub-name" id="res-name-3">---</div>
                 <div class="sub-score" id="res-score-3">3位: --%</div>
             </div>
+            <div class="sub-card">
+                <div class="sub-name" id="res-name-4">---</div>
+                <div class="sub-score" id="res-score-4">4位: --%</div>
+            </div>
+            <div class="sub-card">
+                <div class="sub-name" id="res-name-5">---</div>
+                <div class="sub-score" id="res-score-5">5位: --%</div>
+            </div>
+        </div>
+        
+        <div id="minor-results" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 10px; font-size: 11px; color: #777; text-align: center;">
+            <div style="margin-bottom: 5px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 3px;">6位 〜 10位</div>
+            <div id="res-minor-list">---</div>
         </div>
     </div>
 </main>
@@ -331,6 +344,11 @@ const resName2 = document.getElementById('res-name-2');
 const resScore2 = document.getElementById('res-score-2');
 const resName3 = document.getElementById('res-name-3');
 const resScore3 = document.getElementById('res-score-3');
+const resName4 = document.getElementById('res-name-4');
+const resScore4 = document.getElementById('res-score-4');
+const resName5 = document.getElementById('res-name-5');
+const resScore5 = document.getElementById('res-score-5');
+const resMinorList = document.getElementById('res-minor-list');
 
 // IndexedDBの初期化
 async function initDB() {
@@ -505,18 +523,34 @@ function identifyPokemon(inputSig) {
         resName.innerText = p1.name;
         resScore.innerText = `一致度: ${Math.floor(top1.score)}%`;
 
-        // 2位
-        if (allMatches.length > 1) {
-            const top2 = allMatches[1];
-            resName2.innerText = POKEMON_DB[top2.id].name;
-            resScore2.innerText = `2位: ${Math.floor(top2.score)}%`;
+        // 2位 〜 5位 の表示
+        const subFields = [
+            { name: resName2, score: resScore2 },
+            { name: resName3, score: resScore3 },
+            { name: resName4, score: resScore4 },
+            { name: resName5, score: resScore5 }
+        ];
+
+        for (let i = 0; i < subFields.length; i++) {
+            const match = allMatches[i + 1];
+            if (match && match.score > 0) {
+                subFields[i].name.innerText = POKEMON_DB[match.id].name;
+                subFields[i].score.innerText = `${i + 2}位: ${Math.floor(match.score)}%`;
+            } else {
+                subFields[i].name.innerText = "---";
+                subFields[i].score.innerText = `${i + 2}位: --%`;
+            }
         }
-        // 3位
-        if (allMatches.length > 2) {
-            const top3 = allMatches[2];
-            resName3.innerText = POKEMON_DB[top3.id].name;
-            resScore3.innerText = `3位: ${Math.floor(top3.score)}%`;
+
+        // 6位 〜 10位 の表示（名前のみ）
+        let minorNames = [];
+        for (let i = 5; i < 10; i++) {
+            const match = allMatches[i];
+            if (match && match.score > 0) {
+                minorNames.push(POKEMON_DB[match.id].name);
+            }
         }
+        resMinorList.innerText = minorNames.length > 0 ? minorNames.join(" 、 ") : "---";
 
         resultContainer.style.display = 'block';
         statusEl.innerText = "判別完了！";
