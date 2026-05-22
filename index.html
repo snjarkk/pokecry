@@ -10,14 +10,12 @@
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
         h1 { margin: 0; font-size: 16px; letter-spacing: 1px; }
 
-        /* モード切替タブ */
         .mode-tabs { display: flex; background: #1c1c1e; padding: 5px; gap: 5px; flex-shrink: 0; border-bottom: 1px solid #333; }
         .tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
         .tab.active { background: #333; color: var(--primary); }
 
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
         
-        /* 共通：セクション制御 */
         .mode-section { width: 100%; display: none; flex-direction: column; align-items: center; }
         .mode-section.active { display: flex; }
 
@@ -25,53 +23,51 @@
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
-        
         #btn-record { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 5px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
-        #btn-record:active { transform: scale(0.92); }
-        #btn-record.recording { box-shadow: 0 0 30px rgba(255, 69, 58, 0.4); border-color: #444; }
-        
+        #btn-record.recording { box-shadow: 0 0 30px rgba(255, 69, 58, 0.4); }
         #status { font-size: 11px; font-weight: bold; color: var(--subtext); text-transform: uppercase; margin-top: 5px; margin-bottom: 15px; }
         
         #result-container { width: 100%; max-width: 340px; }
-        .result-card { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--primary); margin-bottom: 10px; box-shadow: 0 4px 20px rgba(255, 69, 58, 0.1); }
+        .result-card { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--primary); margin-bottom: 10px; }
         .pokemon-id { color: #ffffff; font-size: 12px; margin-bottom: 2px; font-weight: bold; }
         .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 12px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
 
         .sub-results { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; margin-bottom: 10px; }
-        .sub-card { background: var(--card); padding: 8px 12px; border-radius: 8px; display: flex; flex-direction: row; align-items: center; border: 1px solid #333; justify-content: space-between; }
+        .sub-card { background: var(--card); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; border: 1px solid #333; }
         .sub-rank-score { font-size: 10px; color: #ffffff; background: #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; min-width: 55px; text-align: center; }
-        .sub-info { display: flex; flex-direction: row; align-items: center; gap: 8px; flex: 1; overflow: hidden; }
-        .sub-id { font-size: 11px; color: #ffffff; font-weight: bold; flex-shrink: 0; }
-        .sub-name { font-weight: bold; font-size: 20px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+        .sub-id { font-size: 11px; color: #ffffff; font-weight: bold; margin-right: 8px; }
+        .sub-name { font-weight: bold; font-size: 20px; color: #ffffff; }
 
-        #minor-results { padding: 10px; background: #151517; border-radius: 10px; border: 1px solid #2c2c2e; width: 100%; box-sizing: border-box; }
-        #minor-results b { font-size: 10px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
         #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; }
-        .minor-item { display: flex; flex-direction: row; align-items: flex-start; gap: 8px; border-bottom: 1px solid #252527; padding-bottom: 5px; overflow: hidden; }
+        .minor-item { display: flex; align-items: flex-start; gap: 8px; border-bottom: 1px solid #252527; padding-bottom: 5px; }
         .minor-rank-box { width: 24px; height: 34px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #fff; flex-shrink: 0; }
-        .minor-content { display: flex; flex-direction: column; overflow: hidden; }
-        .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.9; margin-bottom: 1px; }
-        .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.9; }
+        .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; }
 
         /* クイズモード */
-        .quiz-container { width: 100%; max-width: 340px; margin-top: 10px; }
-        #btn-quiz-play { width: 100px; height: 100px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.1s; }
-        #btn-quiz-play:active { transform: scale(0.95); }
-        #btn-quiz-play.playing { border-color: var(--primary); animation: pulse-quiz 1s infinite; }
-        @keyframes pulse-quiz { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-
-        .choices { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .choice-btn { background: #1c1c1e; padding: 18px; border-radius: 12px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-        .choice-btn:active { background: #2c2c2e; }
-        .choice-btn.correct { background: var(--correct); border-color: var(--correct); color: white; }
-        .choice-btn.wrong { background: var(--wrong); border-color: var(--wrong); color: white; opacity: 0.7; }
+        .quiz-container { width: 100%; max-width: 340px; margin-top: 5px; }
         
-        #quiz-feedback { font-size: 20px; font-weight: bold; margin-top: 20px; height: 30px; text-align: center; }
-        #btn-next-quiz { margin-top: 20px; background: #333; color: white; padding: 12px 30px; border-radius: 20px; font-weight: bold; border: none; display: none; cursor: pointer; }
+        /* 番号登録エリア */
+        .quiz-reg-area { width: 100%; background: #1c1c1e; padding: 10px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; box-sizing: border-box; }
+        .reg-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        #input-reg-id { flex: 1; background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; font-size: 16px; outline: none; }
+        #btn-reg-add { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; }
+        
+        .reg-list-title { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        #reg-pokemon-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .reg-item { background: #333; font-size: 9px; padding: 4px; border-radius: 4px; text-align: center; color: #eee; position: relative; }
+        .reg-item.newest { border: 1px solid var(--primary); }
+
+        #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        #btn-quiz-play.playing { border-color: var(--primary); }
+        .choice-btn { background: #1c1c1e; padding: 15px; border-radius: 10px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 10px; }
+        .choice-btn.correct { background: var(--correct); }
+        .choice-btn.wrong { background: var(--wrong); }
+        #quiz-feedback { font-size: 18px; font-weight: bold; margin-top: 10px; height: 24px; text-align: center; }
+        #btn-next-quiz { margin: 15px auto; background: #333; color: white; padding: 10px 25px; border-radius: 20px; font-weight: bold; border: none; display: none; cursor: pointer; }
 
         footer { padding: 10px; text-align: center; font-size: 10px; color: #333; flex-shrink: 0; }
-        
         #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
         #progress-bar { width: 70%; height: 4px; background: #1c1c1e; border-radius: 2px; margin-top: 15px; overflow: hidden; }
         #progress-inner { width: 0%; height: 100%; background: var(--primary); transition: width 0.1s; }
@@ -92,15 +88,10 @@
     <!-- 識別モード -->
     <div id="id-section" class="mode-section active">
         <div class="recorder-row">
-            <div class="visualizer-container">
-                <canvas id="visualizer"></canvas>
-            </div>
-            <div id="btn-record">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-            </div>
+            <div class="visualizer-container"><canvas id="visualizer"></canvas></div>
+            <div id="btn-record"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></div>
         </div>
         <div id="status">TAP AND HOLD</div>
-
         <div id="result-container" style="display:none">
             <div class="result-card">
                 <div class="pokemon-id" id="res-id">No.----</div>
@@ -108,30 +99,12 @@
                 <div class="match-score" id="res-score">MATCH: --%</div>
             </div>
             <div class="sub-results">
-                <div class="sub-card">
-                    <div class="sub-rank-score" id="res-score-2">2nd: --%</div>
-                    <div class="sub-info">
-                        <span class="sub-id" id="res-id-2">No.----</span>
-                        <span class="sub-name" id="res-name-2">---</span>
-                    </div>
-                </div>
-                <div class="sub-card">
-                    <div class="sub-rank-score" id="res-score-3">3rd: --%</div>
-                    <div class="sub-info">
-                        <span class="sub-id" id="res-id-3">No.----</span>
-                        <span class="sub-name" id="res-name-3">---</span>
-                    </div>
-                </div>
-                <div class="sub-card">
-                    <div class="sub-rank-score" id="res-score-4">4th: --%</div>
-                    <div class="sub-info">
-                        <span class="sub-id" id="res-id-4">No.----</span>
-                        <span class="sub-name" id="res-name-4">---</span>
-                    </div>
-                </div>
+                <div class="sub-card"><div class="sub-rank-score" id="res-score-2">2nd: --%</div><span class="sub-id" id="res-id-2">No.----</span><span class="sub-name" id="res-name-2">---</span></div>
+                <div class="sub-card"><div class="sub-rank-score" id="res-score-3">3rd: --%</div><span class="sub-id" id="res-id-3">No.----</span><span class="sub-name" id="res-name-3">---</span></div>
+                <div class="sub-card"><div class="sub-rank-score" id="res-score-4">4th: --%</div><span class="sub-id" id="res-id-4">No.----</span><span class="sub-name" id="res-name-4">---</span></div>
             </div>
-            <div id="minor-results">
-                <b>OTHERS (5 - 10)</b>
+            <div id="minor-results" style="padding:10px; background:#151517; border-radius:10px; border:1px solid #2c2c2e; width:100%; box-sizing:border-box;">
+                <b style="font-size:10px; color:#666; display:block; margin-bottom:10px; text-align:center;">OTHERS (5 - 10)</b>
                 <div id="res-minor-list"></div>
             </div>
         </div>
@@ -139,19 +112,24 @@
 
     <!-- クイズモード -->
     <div id="quiz-section" class="mode-section">
-        <div class="quiz-container">
-            <div id="btn-quiz-play">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+        <div class="quiz-reg-area">
+            <div class="reg-input-row">
+                <input type="number" id="input-reg-id" placeholder="No. (例: 25)" min="1" max="649">
+                <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
             </div>
+            <div class="reg-list-title"><span>クイズ対象 (最大20匹)</span><span id="reg-count">0/20</span></div>
+            <div id="reg-pokemon-list"></div>
+        </div>
+        
+        <div class="quiz-container">
+            <div id="btn-quiz-play"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
             <div class="choices" id="quiz-choices">
-                <div class="choice-btn" onclick="checkAnswer(0)">Choice 1</div>
-                <div class="choice-btn" onclick="checkAnswer(1)">Choice 2</div>
-                <div class="choice-btn" onclick="checkAnswer(2)">Choice 3</div>
+                <div class="choice-btn" onclick="checkAnswer(0)">---</div>
+                <div class="choice-btn" onclick="checkAnswer(1)">---</div>
+                <div class="choice-btn" onclick="checkAnswer(2)">---</div>
             </div>
             <div id="quiz-feedback"></div>
-            <div style="text-align: center">
-                <button id="btn-next-quiz" onclick="nextQuiz()">NEXT CRY</button>
-            </div>
+            <button id="btn-next-quiz" onclick="nextQuiz()">NEXT CRY</button>
         </div>
     </div>
 </main>
@@ -159,12 +137,10 @@
 <div id="init-overlay">
     <div id="init-text" style="font-size: 16px; font-weight: bold; letter-spacing: 2px;">START SYSTEM</div>
     <div id="progress-bar"><div id="progress-inner"></div></div>
-    <div id="progress-percent" style="margin-top:8px; font-size:12px; font-family:monospace;">0%</div>
+    <div id="progress-percent" style="margin-top:8px; font-size:12px;">0%</div>
 </div>
 
-<footer>
-    &copy; Pokemon Cry ID System
-</footer>
+<footer>&copy; Pokemon Cry ID System</footer>
 
 <script>
 const POKEMON_DB = {
@@ -303,88 +279,7 @@ const POKEMON_DB = {
   "0397": { name: "ムクバード", ext: "mp3" }, "0398": { name: "ムクホーク", ext: "mp3" }, "0399": { name: "ビッパ", ext: "mp3" },
   "0400": { name: "ビーダル", ext: "mp3" }, "0401": { name: "コロボーシ", ext: "mp3" }, "0402": { name: "コロトック", ext: "mp3" },
   "0403": { name: "コリンク", ext: "mp3" }, "0404": { name: "ルクシオ", ext: "mp3" }, "0405": { name: "レントラー", ext: "mp3" },
-  "0406": { name: "スボミー", ext: "mp3" }, "0407": { name: "ロズレイド", ext: "mp3" }, "0408": { name: "ズガイドス", ext: "mp3" },
-  "0409": { name: "ラムパルド", ext: "mp3" }, "0410": { name: "タテトプス", ext: "mp3" }, "0411": { name: "トリデプス", ext: "mp3" },
-  "0412": { name: "ミノムッチ", ext: "mp3" }, "0413": { name: "ミノマダム", ext: "mp3" }, "0414": { name: "ガーメイル", ext: "mp3" },
-  "0415": { name: "ミツハニー", ext: "mp3" }, "0416": { name: "ビークイン", ext: "mp3" }, "0417": { name: "パチリス", ext: "mp3" },
-  "0418": { name: "ブイゼル", ext: "mp3" }, "0419": { name: "フローゼル", ext: "mp3" }, "0420": { name: "チェリンボ", ext: "mp3" },
-  "0421": { name: "チェリム", ext: "mp3" }, "0422": { name: "カラナクシ", ext: "mp3" }, "0423": { name: "トリトドン", ext: "mp3" },
-  "0424": { name: "エテボース", ext: "mp3" }, "0425": { name: "フワンテ", ext: "mp3" }, "0426": { name: "フワライド", ext: "mp3" },
-  "0427": { name: "ミミロル", ext: "mp3" }, "0428": { name: "ミミロップ", ext: "mp3" }, "0429": { name: "ムウマージ", ext: "mp3" },
-  "0430": { name: "ドンカラス", ext: "mp3" }, "0431": { name: "ニャルマー", ext: "mp3" }, "0432": { name: "ブニャット", ext: "mp3" },
-  "0433": { name: "リーシャン", ext: "mp3" }, "0434": { name: "スカンプー", ext: "mp3" }, "0435": { name: "スカタンク", ext: "mp3" },
-  "0436": { name: "ドーミラー", ext: "mp3" }, "0437": { name: "ドータクン", ext: "mp3" }, "0438": { name: "ウソハチ", ext: "mp3" },
-  "0439": { name: "マネネ", ext: "mp3" }, "0440": { name: "ピンプク", ext: "mp3" }, "0441": { name: "ペラップ", ext: "mp3" },
-  "0442": { name: "ミカルゲ", ext: "mp3" }, "0443": { name: "フカマル", ext: "mp3" }, "0444": { name: "ガバイト", ext: "mp3" },
-  "0445": { name: "ガブリアス", ext: "mp3" }, "0446": { name: "ゴンベ", ext: "mp3" }, "0447": { name: "リオル", ext: "mp3" },
-  "0448": { name: "ルカリオ", ext: "mp3" }, "0449": { name: "ヒポポタス", ext: "mp3" }, "0450": { name: "カバルドン", ext: "mp3" },
-  "0451": { name: "スコルピ", ext: "mp3" }, "0452": { name: "ドラピオン", ext: "mp3" }, "0453": { name: "グレッグル", ext: "mp3" },
-  "0454": { name: "ドクロッグ", ext: "mp3" }, "0455": { name: "マスキッパ", ext: "mp3" }, "0456": { name: "ケイコウオ", ext: "mp3" },
-  "0457": { name: "ネオラント", ext: "mp3" }, "0458": { name: "タマンタ", ext: "mp3" }, "0459": { name: "ユキカブリ", ext: "mp3" },
-  "0460": { name: "ユキノオー", ext: "mp3" }, "0461": { name: "マニューラ", ext: "mp3" }, "0462": { name: "ジバコイル", ext: "mp3" },
-  "0463": { name: "ベロベルト", ext: "mp3" }, "0464": { name: "ドサイドン", ext: "mp3" }, "0465": { name: "モジャンボ", ext: "mp3" },
-  "0466": { name: "エレキブル", ext: "mp3" }, "0467": { name: "ブーバーーン", ext: "mp3" }, "0468": { name: "トゲキッス", ext: "mp3" },
-  "0469": { name: "メガヤンマ", ext: "mp3" }, "0470": { name: "リーフィア", ext: "mp3" }, "0471": { name: "グレイシア", ext: "mp3" },
-  "0472": { name: "グライオン", ext: "mp3" }, "0473": { name: "マンムー", ext: "mp3" }, "0474": { name: "ポリゴン\uff3a", ext: "mp3" },
-  "0475": { name: "エルレイド", ext: "mp3" }, "0476": { name: "ダイノーズ", ext: "mp3" }, "0477": { name: "ヨノワール", ext: "mp3" },
-  "0478": { name: "ユキメノコ", ext: "mp3" }, "0479": { name: "ロトム", ext: "mp3" }, "0480": { name: "ユクシー", ext: "mp3" },
-  "0481": { name: "エムリット", ext: "mp3" }, "0482": { name: "アグノム", ext: "mp3" }, "0483": { name: "ディアルガ", ext: "mp3" },
-  "0484": { name: "パルキア", ext: "mp3" }, "0485": { name: "ヒードラン", ext: "mp3" }, "0486": { name: "レジギガス", ext: "mp3" },
-  "0487": { name: "ギラティナ", ext: "mp3" }, "0488": { name: "クレセリア", ext: "mp3" }, "0489": { name: "フィオネ", ext: "mp3" },
-  "0490": { name: "マナフィ", ext: "mp3" }, "0491": { name: "ダークライ", ext: "mp3" }, "0492": { name: "シェイミ", ext: "mp3" },
-  "0493": { name: "アルセウス", ext: "mp3" }, "0494": { name: "ビクティニ", ext: "mp3" }, "0495": { name: "ツタージャ", ext: "mp3" },
-  "0496": { name: "ジャノビー", ext: "mp3" }, "0497": { name: "ジャローダ", ext: "mp3" }, "0498": { name: "ポカブ", ext: "mp3" },
-  "0499": { name: "チャオブー", ext: "mp3" }, "0500": { name: "エンブオー", ext: "mp3" }, "0501": { name: "ミジュマル", ext: "mp3" },
-  "0502": { name: "フタチマル", ext: "mp3" }, "0503": { name: "ダイケンキ", ext: "mp3" }, "0504": { name: "ミネズミ", ext: "mp3" },
-  "0505": { name: "ミルホッグ", ext: "mp3" }, "0506": { name: "ヨーテリー", ext: "mp3" }, "0507": { name: "ハーデリア", ext: "mp3" },
-  "0508": { name: "ムーランド", ext: "mp3" }, "0509": { name: "チョロネコ", ext: "mp3" }, "0510": { name: "レパルダス", ext: "mp3" },
-  "0511": { name: "ヤナップ", ext: "mp3" }, "0512": { name: "ヤナッキー", ext: "mp3" }, "0513": { name: "バオップ", ext: "mp3" },
-  "0514": { name: "バオッキー", ext: "mp3" }, "0515": { name: "ヒヤップ", ext: "mp3" }, "0516": { name: "ヒヤッキー", ext: "mp3" },
-  "0517": { name: "ムンナ", ext: "mp3" }, "0518": { name: "ムシャーナ", ext: "mp3" }, "0519": { name: "マメパト", ext: "mp3" },
-  "0520": { name: "ハトーボー", ext: "mp3" }, "0521": { name: "ケンホロウ", ext: "mp3" }, "0522": { name: "シママ", ext: "mp3" },
-  "0523": { name: "ゼブライカ", ext: "mp3" }, "0524": { name: "ダンゴロ", ext: "mp3" }, "0525": { name: "ガントル", ext: "mp3" },
-  "0526": { name: "ギガイアス", ext: "mp3" }, "0527": { name: "コロモリ", ext: "mp3" }, "0528": { name: "ココロモリ", ext: "mp3" },
-  "0529": { name: "モグリュー", ext: "mp3" }, "0530": { name: "ドリュウズ", ext: "mp3" }, "0531": { name: "タブンネ", ext: "mp3" },
-  "0532": { name: "ドッコラー", ext: "mp3" }, "0533": { name: "ドテッコツ", ext: "mp3" }, "0534": { name: "ローブシン", ext: "mp3" },
-  "0535": { name: "オタマロ", ext: "mp3" }, "0536": { name: "ガマガル", ext: "mp3" }, "0537": { name: "ガマゲロゲ", ext: "mp3" },
-  "0538": { name: "ナゲキ", ext: "mp3" }, "0539": { name: "ダゲキ", ext: "mp3" }, "0540": { name: "クルミル", ext: "mp3" },
-  "0541": { name: "クルマゆ", ext: "mp3" }, "0542": { name: "ハハコモリ", ext: "mp3" }, "0543": { name: "フシデ", ext: "mp3" },
-  "0544": { name: "ホイーガ", ext: "mp3" }, "0545": { name: "ペンドラー", ext: "mp3" }, "0546": { name: "モンメン", ext: "mp3" },
-  "0547": { name: "エルフーン", ext: "mp3" }, "0548": { name: "チュリネ", ext: "mp3" }, "0549": { name: "ドレディア", ext: "mp3" },
-  "0550": { name: "バスラオ", ext: "mp3" }, "0551": { name: "メグロコ", ext: "mp3" }, "0552": { name: "ワルビル", ext: "mp3" },
-  "0553": { name: "ワルビアル", ext: "mp3" }, "0554": { name: "ダルマッカ", ext: "mp3" }, "0555": { name: "ヒヒダルマ", ext: "mp3" },
-  "0556": { name: "マラカッチ", ext: "mp3" }, "0557": { name: "イシズマイ", ext: "mp3" }, "0558": { name: "イワパレス", ext: "mp3" },
-  "0559": { name: "ズルッグ", ext: "mp3" }, "0560": { name: "ズルズキン", ext: "mp3" }, "0561": { name: "シンボラー", ext: "mp3" },
-  "0562": { name: "デスマス", ext: "mp3" }, "0563": { name: "デスカーン", ext: "mp3" }, "0564": { name: "プロトーガ", ext: "mp3" },
-  "0565": { name: "アバゴーラ", ext: "mp3" }, "0566": { name: "アーケン", ext: "mp3" }, "0567": { name: "アーケオス", ext: "mp3" },
-  "0568": { name: "ヤブクロン", ext: "mp3" }, "0569": { name: "ダストダス", ext: "mp3" }, "0570": { name: "ゾロア", ext: "mp3" },
-  "0571": { name: "ゾロアーク", ext: "mp3" }, "0572": { name: "チラーミィ", ext: "mp3" }, "0573": { name: "チラチーノ", ext: "mp3" },
-  "0574": { name: "ゴチム", ext: "mp3" }, "0575": { name: "ゴチミル", ext: "mp3" }, "0576": { name: "ゴチルゼル", ext: "mp3" },
-  "0577": { name: "ユニラン", ext: "mp3" }, "0578": { name: "ダブラン", ext: "mp3" }, "0579": { name: "ランクルス", ext: "mp3" },
-  "0580": { name: "コアルヒー", ext: "mp3" }, "0581": { name: "スワンナ", ext: "mp3" }, "0582": { name: "バニプッチ", ext: "mp3" },
-  "0583": { name: "バニリッチ", ext: "mp3" }, "0584": { name: "バイバニラ", ext: "mp3" }, "0585": { name: "シキジカ", ext: "mp3" },
-  "0586": { name: "メブキジカ", ext: "mp3" }, "0587": { name: "エモンガ", ext: "mp3" }, "0588": { name: "カブルモ", ext: "mp3" },
-  "0589": { name: "シュバルゴ", ext: "mp3" }, "0590": { name: "タマゲタケ", ext: "mp3" }, "0591": { name: "モロバレル", ext: "mp3" },
-  "0592": { name: "プルリル", ext: "mp3" }, "0593": { name: "ブルンゲル", ext: "mp3" }, "0594": { name: "ママンボウ", ext: "mp3" },
-  "0595": { name: "バチュル", ext: "mp3" }, "0596": { name: "デンチュラ", ext: "mp3" }, "0597": { name: "テッシード", ext: "mp3" },
-  "0598": { name: "ナットレイ", ext: "mp3" }, "0599": { name: "ギアル", ext: "mp3" }, "0600": { name: "ギギアル", ext: "mp3" },
-  "0601": { name: "ギギギアル", ext: "mp3" }, "0602": { name: "シビシラス", ext: "mp3" }, "0603": { name: "シビビール", ext: "mp3" },
-  "0604": { name: "シビルドン", ext: "mp3" }, "0605": { name: "リグレー", ext: "mp3" }, "0606": { name: "オーベム", ext: "mp3" },
-  "0607": { name: "ヒトモシ", ext: "mp3" }, "0608": { name: "ランプラー", ext: "mp3" }, "0609": { name: "シャンデラ", ext: "mp3" },
-  "0610": { name: "キバゴ", ext: "mp3" }, "0611": { name: "オノンド", ext: "mp3" }, "0612": { name: "オノノクス", ext: "mp3" },
-  "0613": { name: "クマシュン", ext: "mp3" }, "0614": { name: "ツンベアー", ext: "mp3" }, "0615": { name: "フリージオ", ext: "mp3" },
-  "0616": { name: "チョボマキ", ext: "mp3" }, "0617": { name: "アギルダー", ext: "mp3" }, "0618": { name: "マッギョ", ext: "mp3" },
-  "0619": { name: "コジョフー", ext: "mp3" }, "0620": { name: "コジョンド", ext: "mp3" }, "0621": { name: "クリムガン", ext: "mp3" },
-  "0622": { name: "ゴビット", ext: "mp3" }, "0623": { name: "ゴルーグ", ext: "mp3" }, "0624": { name: "コマタナ", ext: "mp3" },
-  "0625": { name: "キリキザン", ext: "mp3" }, "0626": { name: "バッフロン", ext: "mp3" }, "0627": { name: "ワシボン", ext: "mp3" },
-  "0628": { name: "ウォーグル", ext: "mp3" }, "0629": { name: "バルチャイ", ext: "mp3" }, "0630": { name: "バルジーナ", ext: "mp3" },
-  "0631": { name: "クイタラン", ext: "mp3" }, "0632": { name: "アイアント", ext: "mp3" }, "0633": { name: "モノズ", ext: "mp3" },
-  "0634": { name: "ジヘッド", ext: "mp3" }, "0635": { name: "サザンドラ", ext: "mp3" }, "0636": { name: "メラルバ", ext: "mp3" },
-  "0637": { name: "ウルガモス", ext: "mp3" }, "0638": { name: "コバルオン", ext: "mp3" }, "0639": { name: "テラキオン", ext: "mp3" },
-  "0640": { name: "ビリジオン", ext: "mp3" }, "0641": { name: "トルネロス", ext: "mp3" }, "0642": { name: "ボルトロス", ext: "mp3" },
-  "0643": { name: "レシラム", ext: "mp3" }, "0644": { name: "ゼクロム", ext: "mp3" }, "0645": { name: "ランドロス", ext: "mp3" },
-  "0646": { name: "キュレム", ext: "mp3" }, "0647": { name: "ケルディオ", ext: "mp3" }, "0648": { name: "メロエッタ", ext: "mp3" },
-  "0649": { name: "ゲノセクト", ext: "mp3" }
+  "0407": { name: "ロズレイド", ext: "mp3" }, "0448": { name: "ルカリオ", ext: "mp3" }, "0649": { name: "ゲノセクト", ext: "mp3" }
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
@@ -409,16 +304,15 @@ const canvas = document.getElementById('visualizer');
 const canvasCtx = canvas.getContext('2d');
 let analyser, waveDataArray, animationId, waveHistory = [];
 
-// クイズ用変数
+// クイズ用
 let quizCorrectId = "";
 let quizChoices = [];
+let registeredQuizIds = []; // ユーザーが登録した最大20匹のリスト
 
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
-        request.onupgradeneeded = e => {
-            if (!e.target.result.objectStoreNames.contains(STORE_NAME)) e.target.result.createObjectStore(STORE_NAME);
-        };
+        request.onupgradeneeded = e => { if (!e.target.result.objectStoreNames.contains(STORE_NAME)) e.target.result.createObjectStore(STORE_NAME); };
         request.onsuccess = e => resolve(e.target.result);
         request.onerror = e => reject(e);
     });
@@ -426,23 +320,17 @@ async function initDB() {
 
 async function extractV5Fingerprint(audioBuffer) {
     const data = audioBuffer.getChannelData(0);
-    const sampleRate = audioBuffer.sampleRate;
-    const stepSize = Math.floor(sampleRate * 0.025); 
-    const windowSize = Math.floor(sampleRate * 0.05); 
+    const stepSize = Math.floor(audioBuffer.sampleRate * 0.025); 
+    const windowSize = Math.floor(audioBuffer.sampleRate * 0.05); 
     const fingerprint = [];
     let prevRMS = 0;
     for (let i = 0; i < data.length - windowSize; i += stepSize) {
         const frame = data.slice(i, i + windowSize);
-        let sumSq = 0;
-        for (let j = 0; j < frame.length; j++) sumSq += frame[j] * frame[j];
+        let sumSq = 0; for (let j = 0; j < frame.length; j++) sumSq += frame[j] * frame[j];
         const rms = Math.sqrt(sumSq / frame.length);
-        let zc = 0;
-        for (let j = 1; j < frame.length; j++) {
-            if ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0)) zc++;
-        }
+        let zc = 0; for (let j = 1; j < frame.length; j++) { if ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0)) zc++; }
         const brightness = zc / frame.length;
-        const flux = Math.abs(rms - prevRMS);
-        prevRMS = rms;
+        const flux = Math.abs(rms - prevRMS); prevRMS = rms;
         fingerprint.push({ e: rms, b: brightness, f: flux });
     }
     const maxE = Math.max(...fingerprint.map(p => p.e)) || 1;
@@ -482,29 +370,60 @@ function switchMode(mode) {
     } else {
         document.querySelector('.tab:nth-child(2)').classList.add('active');
         document.getElementById('quiz-section').classList.add('active');
-        nextQuiz(); // クイズ開始
+        if (registeredQuizIds.length > 0) nextQuiz();
     }
 }
 
-// クイズロジック
-function nextQuiz() {
-    const ids = Object.keys(POKEMON_DB);
-    quizCorrectId = ids[Math.floor(Math.random() * ids.length)];
+// クイズ登録ロジック
+function addPokemonToQuiz() {
+    const input = document.getElementById('input-reg-id');
+    let id = input.value.trim().padStart(4, '0');
+    if (!POKEMON_DB[id]) { alert("無効な番号です。"); return; }
     
-    // 誤答の選択肢を2つ選ぶ
+    // 重複チェック
+    const index = registeredQuizIds.indexOf(id);
+    if (index !== -1) registeredQuizIds.splice(index, 1);
+    
+    registeredQuizIds.push(id);
+    if (registeredQuizIds.length > 20) registeredQuizIds.shift(); // FIFO: 古い順に上書き
+    
+    renderRegisteredList();
+    input.value = "";
+}
+
+function renderRegisteredList() {
+    const listEl = document.getElementById('reg-pokemon-list');
+    const countEl = document.getElementById('reg-count');
+    listEl.innerHTML = "";
+    registeredQuizIds.forEach((id, i) => {
+        const item = document.createElement('div');
+        item.className = 'reg-item' + (i === registeredQuizIds.length - 1 ? ' newest' : '');
+        item.innerText = id;
+        listEl.appendChild(item);
+    });
+    countEl.innerText = `${registeredQuizIds.length}/20`;
+}
+
+function nextQuiz() {
+    if (registeredQuizIds.length === 0) {
+        document.getElementById('quiz-feedback').innerText = "番号を登録してください";
+        return;
+    }
+    
+    const allIds = Object.keys(POKEMON_DB);
+    quizCorrectId = registeredQuizIds[Math.floor(Math.random() * registeredQuizIds.length)];
+    
     let distractors = [];
     while(distractors.length < 2) {
-        let d = ids[Math.floor(Math.random() * ids.length)];
+        let d = allIds[Math.floor(Math.random() * allIds.length)];
         if (d !== quizCorrectId && !distractors.includes(d)) distractors.push(d);
     }
     
     quizChoices = [quizCorrectId, ...distractors].sort(() => Math.random() - 0.5);
-    
     const choiceButtons = document.querySelectorAll('.choice-btn');
     quizChoices.forEach((id, index) => {
         choiceButtons[index].innerText = POKEMON_DB[id].name;
         choiceButtons[index].className = 'choice-btn';
-        choiceButtons[index].dataset.id = id;
     });
     
     document.getElementById('quiz-feedback').innerText = "";
@@ -513,10 +432,10 @@ function nextQuiz() {
 }
 
 async function playQuizCry() {
+    if (registeredQuizIds.length === 0) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const btn = document.getElementById('btn-quiz-play');
     btn.classList.add('playing');
-    
     try {
         const resp = await fetch(`${BASE_URL}${quizCorrectId}.${POKEMON_DB[quizCorrectId].ext}`);
         const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
@@ -525,31 +444,21 @@ async function playQuizCry() {
         source.connect(audioCtx.destination);
         source.onended = () => btn.classList.remove('playing');
         source.start(0);
-    } catch (e) {
-        btn.classList.remove('playing');
-        alert("音源の再生に失敗しました。");
-    }
+    } catch (e) { btn.classList.remove('playing'); }
 }
 
 function checkAnswer(index) {
+    if (registeredQuizIds.length === 0 || document.getElementById('btn-next-quiz').style.display === 'block') return;
     const choiceButtons = document.querySelectorAll('.choice-btn');
     const selectedId = quizChoices[index];
     const feedback = document.getElementById('quiz-feedback');
-    
-    if (document.getElementById('btn-next-quiz').style.display === 'block') return; // すでに回答済み
-
     if (selectedId === quizCorrectId) {
         choiceButtons[index].classList.add('correct');
-        feedback.innerText = "CORRECT! ✨";
-        feedback.style.color = "var(--correct)";
+        feedback.innerText = "CORRECT! ✨"; feedback.style.color = "var(--correct)";
     } else {
         choiceButtons[index].classList.add('wrong');
-        feedback.innerText = "WRONG... 😢";
-        feedback.style.color = "var(--wrong)";
-        // 正解を表示
-        quizChoices.forEach((id, i) => {
-            if (id === quizCorrectId) choiceButtons[i].classList.add('correct');
-        });
+        feedback.innerText = "WRONG... 😢"; feedback.style.color = "var(--wrong)";
+        quizChoices.forEach((id, i) => { if (id === quizCorrectId) choiceButtons[i].classList.add('correct'); });
     }
     document.getElementById('btn-next-quiz').style.display = 'block';
 }
@@ -585,9 +494,7 @@ function drawWave() {
     animationId = requestAnimationFrame(drawWave);
     analyser.getByteTimeDomainData(waveDataArray);
     let max = 0;
-    for(let i=0; i<waveDataArray.length; i++) {
-        const v = Math.abs(waveDataArray[i] - 128); if(v > max) max = v;
-    }
+    for(let i=0; i<waveDataArray.length; i++) { const v = Math.abs(waveDataArray[i] - 128); if(v > max) max = v; }
     waveHistory.push(max);
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     canvasCtx.beginPath(); canvasCtx.strokeStyle = '#ff453a'; canvasCtx.lineWidth = 1.5;
@@ -600,13 +507,7 @@ function drawWave() {
     canvasCtx.stroke();
 }
 
-function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        btnRecord.classList.remove('recording');
-        statusEl.innerText = "IDENTIFYING...";
-    }
-}
+function stopRecording() { if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); btnRecord.classList.remove('recording'); statusEl.innerText = "IDENTIFYING..."; } }
 
 function trimSilence(sig) {
     let s = 0; while (s < sig.length && sig[s].e < 0.05) s++;
@@ -619,20 +520,13 @@ function compareFingerprints(sig1, sig2) {
     if (s1.length === 0 || s2.length === 0) return 10.0;
     let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1, minD = Infinity;
     for (let o = 0; o <= lg.length - sh.length; o++) {
-        let d = 0;
-        for (let i = 0; i < sh.length; i++) {
-            const de = sh[i].e - lg[o + i].e; 
-            const db = sh[i].b - lg[o + i].b; 
-            const df = sh[i].f - lg[o + i].f;
+        let d = 0; for (let i = 0; i < sh.length; i++) {
+            const de = sh[i].e - lg[o + i].e; const db = sh[i].b - lg[o + i].b; const df = sh[i].f - lg[o + i].f;
             d += (de * de * 1.5) + (db * db * 2.0) + (df * df * 1.0);
         }
-        d = Math.sqrt(d / sh.length);
-        if (d < minD) minD = d;
+        d = Math.sqrt(d / sh.length); if (d < minD) minD = d;
     }
-    let score = 100 * Math.exp(-minD * 1.2);
-    const ratio = sh.length / lg.length;
-    if (ratio < 0.4) score *= (ratio + 0.6); 
-    return score;
+    return 100 * Math.exp(-minD * 1.2);
 }
 
 function identifyPokemon(inputSig) {
