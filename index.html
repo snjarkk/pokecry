@@ -117,7 +117,9 @@
     <div id="quiz-section" class="mode-section active">
         <div class="quiz-reg-area">
             <div class="reg-input-row">
-                <input type="number" id="input-reg-id" placeholder="No. (例: 25)" min="1" max="649">
+                <input type="text" id="input-reg-id" placeholder="No. または 名前" list="pokemon-names-list">
+                <datalist id="pokemon-names-list">
+                </datalist>
                 <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
             </div>
             <div class="reg-list-title"><span>クイズ対象 (最大30匹 / タップで削除)</span><span id="reg-count">0/30</span></div>
@@ -311,6 +313,13 @@ let quizCorrectId = "";
 let quizChoices = [];
 let registeredQuizIds = []; 
 
+const SAVED_LIST_KEY = "pokecry_quiz_list";
+function loadQuizList() {
+    const saved = localStorage.getItem(SAVED_LIST_KEY);
+    if (saved) { registeredQuizIds = JSON.parse(saved); renderRegisteredList(); }
+}
+function saveQuizList() { localStorage.setItem(SAVED_LIST_KEY, JSON.stringify(registeredQuizIds)); }
+
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
@@ -361,6 +370,8 @@ async function prepareData() {
         progressInner.style.width = `${percent}%`; progressPercent.innerText = `${percent}%`;
     }
     initOverlay.style.display = 'none';
+    loadQuizList();
+    updateQuizUI();
 }
 
 function switchMode(mode) {
@@ -378,24 +389,27 @@ function switchMode(mode) {
 
 function addPokemonToQuiz() {
     const input = document.getElementById('input-reg-id');
-    let id = input.value.trim().padStart(4, '0');
-    if (!POKEMON_DB[id]) { alert("無効な番号です。"); return; }
+    const val = input.value.trim();
+    let id = "";
+    const numericId = val.padStart(4, '0');
+    if (POKEMON_DB[numericId]) { id = numericId; } else {
+        const foundId = Object.keys(POKEMON_DB).find(k => POKEMON_DB[k].name === val);
+        if (foundId) id = foundId;
+    }
+    if (!id) { alert("無効な番号または名前です。"); return; }
     const idx = registeredQuizIds.indexOf(id);
     if (idx !== -1) registeredQuizIds.splice(idx, 1);
     registeredQuizIds.push(id);
-    if (registeredQuizIds.length > 30) registeredQuizIds.shift(); // 30匹まで拡張
+    if (registeredQuizIds.length > 30) registeredQuizIds.shift();
     renderRegisteredList();
+    saveQuizList();
     input.value = "";
     updateQuizUI();
 }
 
 function removePokemonFromQuiz(id) {
     const idx = registeredQuizIds.indexOf(id);
-    if (idx !== -1) {
-        registeredQuizIds.splice(idx, 1);
-        renderRegisteredList();
-        updateQuizUI();
-    }
+    if (idx !== -1) { registeredQuizIds.splice(idx, 1); renderRegisteredList(); saveQuizList(); updateQuizUI(); }
 }
 
 function renderRegisteredList() {
@@ -424,23 +438,17 @@ function updateQuizUI() {
     } else {
         btnPlay.classList.remove('disabled');
         choiceBtns.forEach(b => b.classList.remove('disabled'));
-        if (feedback.innerText === "3匹以上登録してください") {
-            feedback.innerText = "準備完了！";
-            nextQuiz();
-        }
-        if (quizCorrectId === "") nextQuiz();
+        if (feedback.innerText === "3匹以上登録してください") feedback.innerText = "準備完了！";
+        if (quizCorrectId === "" || !registeredQuizIds.includes(quizCorrectId)) nextQuiz();
     }
 }
 
 function nextQuiz() {
     if (registeredQuizIds.length < 3) return;
-    const allIds = Object.keys(POKEMON_DB);
     quizCorrectId = registeredQuizIds[Math.floor(Math.random() * registeredQuizIds.length)];
     let distractors = [];
-    while(distractors.length < 2) {
-        let d = allIds[Math.floor(Math.random() * allIds.length)];
-        if (d !== quizCorrectId && !distractors.includes(d)) distractors.push(d);
-    }
+    let pool = registeredQuizIds.filter(id => id !== quizCorrectId);
+    distractors = pool.sort(() => Math.random() - 0.5).slice(0, 2);
     quizChoices = [quizCorrectId, ...distractors].sort(() => Math.random() - 0.5);
     const choiceButtons = document.querySelectorAll('.choice-btn');
     quizChoices.forEach((id, index) => {
@@ -486,7 +494,6 @@ function checkAnswer(index) {
 
 document.getElementById('btn-quiz-play').addEventListener('click', playQuizCry);
 
-// 識別ロジック
 let mediaRecorder, recordedChunks = [], isDrawing = false;
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -562,7 +569,7 @@ function identifyPokemon(inputSig) {
             const m = matches[j + 1];
             if (m) {
                 const s = Math.floor(Math.min(displayScore - (j+1)*5, m.score + 10));
-                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
+                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.max(5, s)}%`; subs[j].i.innerText = `No.${m.id}`;
             }
         }
         resMinorList.innerHTML = "";
