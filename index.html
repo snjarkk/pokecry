@@ -19,7 +19,7 @@
         .mode-section { width: 100%; display: none; flex-direction: column; align-items: center; }
         .mode-section.active { display: flex; }
 
-        /* 識別モード：録音エリア */
+        /* 識別モード */
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
@@ -47,23 +47,28 @@
 
         /* クイズモード */
         .quiz-container { width: 100%; max-width: 340px; margin-top: 5px; }
-        
-        /* 番号登録エリア */
         .quiz-reg-area { width: 100%; background: #1c1c1e; padding: 10px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; box-sizing: border-box; }
         .reg-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
         #input-reg-id { flex: 1; background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; font-size: 16px; outline: none; }
         #btn-reg-add { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; }
         
-        .reg-list-title { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; justify-content: space-between; }
-        #reg-pokemon-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .reg-item { background: #333; font-size: 9px; padding: 4px; border-radius: 4px; text-align: center; color: #eee; position: relative; }
-        .reg-item.newest { border: 1px solid var(--primary); }
+        .reg-list-title { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        #reg-pokemon-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
+        .reg-item { background: #333; font-size: 9px; padding: 6px 8px; border-radius: 6px; color: #eee; display: flex; align-items: center; justify-content: space-between; border: 1px solid transparent; cursor: pointer; }
+        .reg-item:active { background: #444; }
+        .reg-item.newest { border-color: var(--primary); }
+        .reg-item-name { font-weight: bold; font-size: 11px; flex: 1; margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .reg-item-del { color: #666; font-size: 14px; padding-left: 5px; }
 
         #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
         #btn-quiz-play.playing { border-color: var(--primary); }
+        #btn-quiz-play.disabled { opacity: 0.3; cursor: not-allowed; }
+
         .choice-btn { background: #1c1c1e; padding: 15px; border-radius: 10px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 10px; }
         .choice-btn.correct { background: var(--correct); }
         .choice-btn.wrong { background: var(--wrong); }
+        .choice-btn.disabled { opacity: 0.3; cursor: not-allowed; }
+
         #quiz-feedback { font-size: 18px; font-weight: bold; margin-top: 10px; height: 24px; text-align: center; }
         #btn-next-quiz { margin: 15px auto; background: #333; color: white; padding: 10px 25px; border-radius: 20px; font-weight: bold; border: none; display: none; cursor: pointer; }
 
@@ -85,7 +90,6 @@
 </div>
 
 <main>
-    <!-- 識別モード -->
     <div id="id-section" class="mode-section active">
         <div class="recorder-row">
             <div class="visualizer-container"><canvas id="visualizer"></canvas></div>
@@ -110,14 +114,13 @@
         </div>
     </div>
 
-    <!-- クイズモード -->
     <div id="quiz-section" class="mode-section">
         <div class="quiz-reg-area">
             <div class="reg-input-row">
                 <input type="number" id="input-reg-id" placeholder="No. (例: 25)" min="1" max="649">
                 <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
             </div>
-            <div class="reg-list-title"><span>クイズ対象 (最大20匹)</span><span id="reg-count">0/20</span></div>
+            <div class="reg-list-title"><span>クイズ対象 (タップで削除)</span><span id="reg-count">0/20</span></div>
             <div id="reg-pokemon-list"></div>
         </div>
         
@@ -191,7 +194,7 @@ const POKEMON_DB = {
   "0133": { name: "イーブイ", ext: "wav" }, "0134": { name: "シャワーズ", ext: "wav" }, "0135": { name: "サンダース", ext: "wav" },
   "0136": { name: "ブースター", ext: "wav" }, "0137": { name: "ポリゴン", ext: "wav" }, "0138": { name: "オムナイト", ext: "wav" },
   "0139": { name: "オムスター", ext: "wav" }, "0140": { name: "カブト", ext: "wav" }, "0141": { name: "カブトプス", ext: "wav" },
-  "0142": { name: "プテラ", ext: "wav" }, "0143": { name: "カビゴン", ext: "wav" }, "0144": { name: "フリーザー", ext: "wav" },
+  "0142": { name: "プテラ", ext: "wav" }, "0143": { name: "カびゴン", ext: "wav" }, "0144": { name: "フリーザー", ext: "wav" },
   "0145": { name: "サンダー", ext: "wav" }, "0146": { name: "ファイヤー", ext: "wav" }, "0147": { name: "ミニリュウ", ext: "wav" },
   "0148": { name: "ハクリュー", ext: "wav" }, "0149": { name: "カイリュー", ext: "wav" }, "0150": { name: "ミュウツー", ext: "wav" },
   "0151": { name: "ミュウ", ext: "wav" }, "0152": { name: "チコリータ", ext: "wav" }, "0153": { name: "ベイリーフ", ext: "wav" },
@@ -304,10 +307,9 @@ const canvas = document.getElementById('visualizer');
 const canvasCtx = canvas.getContext('2d');
 let analyser, waveDataArray, animationId, waveHistory = [];
 
-// クイズ用
 let quizCorrectId = "";
 let quizChoices = [];
-let registeredQuizIds = []; // ユーザーが登録した最大20匹のリスト
+let registeredQuizIds = []; 
 
 async function initDB() {
     return new Promise((resolve, reject) => {
@@ -370,25 +372,31 @@ function switchMode(mode) {
     } else {
         document.querySelector('.tab:nth-child(2)').classList.add('active');
         document.getElementById('quiz-section').classList.add('active');
-        if (registeredQuizIds.length > 0) nextQuiz();
+        updateQuizUI();
     }
 }
 
-// クイズ登録ロジック
+// クイズ登録・UI更新
 function addPokemonToQuiz() {
     const input = document.getElementById('input-reg-id');
     let id = input.value.trim().padStart(4, '0');
     if (!POKEMON_DB[id]) { alert("無効な番号です。"); return; }
-    
-    // 重複チェック
-    const index = registeredQuizIds.indexOf(id);
-    if (index !== -1) registeredQuizIds.splice(index, 1);
-    
+    const idx = registeredQuizIds.indexOf(id);
+    if (idx !== -1) registeredQuizIds.splice(idx, 1);
     registeredQuizIds.push(id);
-    if (registeredQuizIds.length > 20) registeredQuizIds.shift(); // FIFO: 古い順に上書き
-    
+    if (registeredQuizIds.length > 20) registeredQuizIds.shift();
     renderRegisteredList();
     input.value = "";
+    updateQuizUI();
+}
+
+function removePokemonFromQuiz(id) {
+    const idx = registeredQuizIds.indexOf(id);
+    if (idx !== -1) {
+        registeredQuizIds.splice(idx, 1);
+        renderRegisteredList();
+        updateQuizUI();
+    }
 }
 
 function renderRegisteredList() {
@@ -398,43 +406,56 @@ function renderRegisteredList() {
     registeredQuizIds.forEach((id, i) => {
         const item = document.createElement('div');
         item.className = 'reg-item' + (i === registeredQuizIds.length - 1 ? ' newest' : '');
-        item.innerText = id;
+        item.onclick = () => removePokemonFromQuiz(id);
+        item.innerHTML = `<span>${id}</span><span class="reg-item-name">${POKEMON_DB[id].name}</span><span class="reg-item-del">×</span>`;
         listEl.appendChild(item);
     });
     countEl.innerText = `${registeredQuizIds.length}/20`;
 }
 
-function nextQuiz() {
-    if (registeredQuizIds.length === 0) {
-        document.getElementById('quiz-feedback').innerText = "番号を登録してください";
-        return;
-    }
+function updateQuizUI() {
+    const btnPlay = document.getElementById('btn-quiz-play');
+    const choiceBtns = document.querySelectorAll('.choice-btn');
+    const feedback = document.getElementById('quiz-feedback');
     
+    if (registeredQuizIds.length < 3) {
+        btnPlay.classList.add('disabled');
+        choiceBtns.forEach(b => { b.classList.add('disabled'); b.innerText = "---"; });
+        feedback.innerText = "3匹以上登録してください";
+        feedback.style.color = "var(--primary)";
+    } else {
+        btnPlay.classList.remove('disabled');
+        choiceBtns.forEach(b => b.classList.remove('disabled'));
+        if (feedback.innerText === "3匹以上登録してください") feedback.innerText = "準備完了！";
+        if (quizCorrectId === "") nextQuiz();
+    }
+}
+
+function nextQuiz() {
+    if (registeredQuizIds.length < 3) return;
     const allIds = Object.keys(POKEMON_DB);
     quizCorrectId = registeredQuizIds[Math.floor(Math.random() * registeredQuizIds.length)];
-    
     let distractors = [];
     while(distractors.length < 2) {
         let d = allIds[Math.floor(Math.random() * allIds.length)];
         if (d !== quizCorrectId && !distractors.includes(d)) distractors.push(d);
     }
-    
     quizChoices = [quizCorrectId, ...distractors].sort(() => Math.random() - 0.5);
     const choiceButtons = document.querySelectorAll('.choice-btn');
     quizChoices.forEach((id, index) => {
         choiceButtons[index].innerText = POKEMON_DB[id].name;
         choiceButtons[index].className = 'choice-btn';
     });
-    
     document.getElementById('quiz-feedback').innerText = "";
     document.getElementById('btn-next-quiz').style.display = 'none';
     document.getElementById('btn-quiz-play').className = '';
 }
 
 async function playQuizCry() {
-    if (registeredQuizIds.length === 0) return;
+    if (registeredQuizIds.length < 3) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const btn = document.getElementById('btn-quiz-play');
+    if (btn.classList.contains('playing')) return;
     btn.classList.add('playing');
     try {
         const resp = await fetch(`${BASE_URL}${quizCorrectId}.${POKEMON_DB[quizCorrectId].ext}`);
@@ -448,7 +469,7 @@ async function playQuizCry() {
 }
 
 function checkAnswer(index) {
-    if (registeredQuizIds.length === 0 || document.getElementById('btn-next-quiz').style.display === 'block') return;
+    if (registeredQuizIds.length < 3 || document.getElementById('btn-next-quiz').style.display === 'block') return;
     const choiceButtons = document.querySelectorAll('.choice-btn');
     const selectedId = quizChoices[index];
     const feedback = document.getElementById('quiz-feedback');
@@ -465,7 +486,7 @@ function checkAnswer(index) {
 
 document.getElementById('btn-quiz-play').addEventListener('click', playQuizCry);
 
-// 識別ロジック (Engine v5)
+// 識別ロジック
 let mediaRecorder, recordedChunks = [], isDrawing = false;
 async function startRecording() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -541,7 +562,7 @@ function identifyPokemon(inputSig) {
             const m = matches[j + 1];
             if (m) {
                 const s = Math.floor(Math.min(displayScore - (j+1)*5, m.score + 10));
-                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.max(5, s)}%`; subs[j].i.innerText = `No.${m.id}`;
+                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
             }
         }
         resMinorList.innerHTML = "";
