@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>POKEMON CRY ID</title>
+    <title>POKEMON Cry Identification</title>
     <style>
         :root { --primary: #ff453a; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --subtext: #aaaaaa; }
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
-        h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
+        h1 { margin: 0; font-size: 16px; letter-spacing: 1px; }
 
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
         
-        /* 録音エリア：波形を広げ、ボタンを右に */
+        /* 録音エリア：波形とボタンを横並びに */
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
@@ -41,10 +41,10 @@
         #minor-results { padding: 10px; background: #151517; border-radius: 10px; border: 1px solid #2c2c2e; width: 100%; box-sizing: border-box; }
         #minor-results b { font-size: 10px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
         #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; }
-        .minor-item { display: flex; flex-direction: row; align-items: flex-start; gap: 6px; border-bottom: 1px solid #252527; padding-bottom: 4px; overflow: hidden; }
-        .minor-rank-box { width: 22px; height: 32px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff; flex-shrink: 0; }
+        .minor-item { display: flex; flex-direction: row; align-items: flex-start; gap: 8px; border-bottom: 1px solid #252527; padding-bottom: 5px; overflow: hidden; }
+        .minor-rank-box { width: 24px; height: 34px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #fff; flex-shrink: 0; }
         .minor-content { display: flex; flex-direction: column; overflow: hidden; }
-        .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
+        .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.9; margin-bottom: 1px; }
         .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         footer { padding: 10px; text-align: center; font-size: 10px; color: #333; flex-shrink: 0; }
@@ -57,7 +57,7 @@
 <body>
 
 <header>
-    <h1>POKEMON CRY ID</h1>
+    <h1>POKEMON Cry Identification</h1>
 </header>
 
 <main>
@@ -275,7 +275,7 @@ const POKEMON_DB = {
   "0457": { name: "ネオラント", ext: "mp3" }, "0458": { name: "タマンタ", ext: "mp3" }, "0459": { name: "ユキカブリ", ext: "mp3" },
   "0460": { name: "ユキノオー", ext: "mp3" }, "0461": { name: "マニューラ", ext: "mp3" }, "0462": { name: "ジバコイル", ext: "mp3" },
   "0463": { name: "ベロベルト", ext: "mp3" }, "0464": { name: "ドサイドン", ext: "mp3" }, "0465": { name: "モジャンボ", ext: "mp3" },
-  "0466": { name: "エレキブル", ext: "mp3" }, "0467": { name: "ブーバーン", ext: "mp3" }, "0468": { name: "トゲキッス", ext: "mp3" },
+  "0466": { name: "エレキブル", ext: "mp3" }, "0467": { name: "ブーバーーン", ext: "mp3" }, "0468": { name: "トゲキッス", ext: "mp3" },
   "0469": { name: "メガヤンマ", ext: "mp3" }, "0470": { name: "リーフィア", ext: "mp3" }, "0471": { name: "グレイシア", ext: "mp3" },
   "0472": { name: "グライオン", ext: "mp3" }, "0473": { name: "マンムー", ext: "mp3" }, "0474": { name: "ポリゴン\uff3a", ext: "mp3" },
   "0475": { name: "エルレイド", ext: "mp3" }, "0476": { name: "ダイノーズ", ext: "mp3" }, "0477": { name: "ヨノワール", ext: "mp3" },
@@ -421,7 +421,7 @@ async function startRecording() {
     mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
     mediaRecorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
-        isDrawing = false; // 描画フラグをオフにする
+        isDrawing = false; // マイクボタンを放したら描画を止める
         const audioBuffer = await audioCtx.decodeAudioData(await (new Blob(recordedChunks)).arrayBuffer());
         identifyPokemon(await extractSignature(audioBuffer));
     };
@@ -432,7 +432,7 @@ async function startRecording() {
 }
 
 function drawWave() {
-    if (!isDrawing) return; // フラグがオフならループを停止
+    if (!isDrawing) return; // ループを確実に停止
     animationId = requestAnimationFrame(drawWave);
     analyser.getByteTimeDomainData(waveDataArray);
     let max = 0;
@@ -445,8 +445,8 @@ function drawWave() {
     const midY = canvas.height / 2;
     for(let i=0; i<waveHistory.length; i++) {
         const x = (i / waveHistory.length) * canvas.width;
-        // 振幅の感度をさらに上げ、よりダイナミックに強調 (振幅を約3倍に強調)
-        const h = Math.min(canvas.height / 2 - 2, (waveHistory[i] / 128) * (canvas.height * 1.5));
+        // 縦方向の波形を極限まで強調 (約4倍) しつつ、領域内に収める
+        const h = Math.min(canvas.height / 2 - 2, (waveHistory[i] / 128) * (canvas.height * 2.0));
         canvasCtx.moveTo(x, midY - h); canvasCtx.lineTo(x, midY + h);
     }
     canvasCtx.stroke();
