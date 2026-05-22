@@ -337,7 +337,7 @@ const POKEMON_DB = {
 };
 
 const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
-const DB_NAME = 'PokemonCryDB_v4'; // 精度向上のためDBをv4へ刷新
+const DB_NAME = 'PokemonCryDB_v4'; 
 const STORE_NAME = 'fingerprints_v4';
 
 let audioCtx;
@@ -369,65 +369,47 @@ async function initDB() {
     });
 }
 
-// 精度向上の肝：高解像度マルチバンド解析 (25ms分解能 + 4バンド)
+// 精度向上の要：パラメータ間のバランス調整と正規化
 async function extractHighResFingerprint(audioBuffer) {
     const data = audioBuffer.getChannelData(0);
     const sampleRate = audioBuffer.sampleRate;
-    const stepSize = Math.floor(sampleRate * 0.025); // 25ms
-    const windowSize = Math.floor(sampleRate * 0.05); // 50ms (オーバーラップ)
-    
+    const stepSize = Math.floor(sampleRate * 0.025); 
+    const windowSize = Math.floor(sampleRate * 0.05); 
     const fingerprint = [];
     
     for (let i = 0; i < data.length - windowSize; i += stepSize) {
         const frame = data.slice(i, i + windowSize);
-        
-        // 簡易的なデジタルフィルタリング/FFTによる帯域分割
-        // 1. 全体エネルギー
         let totalEnergy = 0;
         for (let j = 0; j < frame.length; j++) totalEnergy += frame[j] * frame[j];
         const rms = Math.sqrt(totalEnergy / frame.length);
         
-        // 2. 周波数成分の重心（Spectral Centroidの近似：ゼロ交差率）
         let zc = 0;
         for (let j = 1; j < frame.length; j++) {
             if ((frame[j] >= 0 && frame[j-1] < 0) || (frame[j] < 0 && frame[j-1] >= 0)) zc++;
         }
-        const centroid = zc / frame.length; // 0.0(低) 〜 1.0(高)
+        const centroid = zc / frame.length; 
         
-        // 3. 帯域ごとの「鋭さ」（簡易的な高周波エネルギー比率）
         let highEnergy = 0;
-        for (let j = 1; j < frame.length; j++) highEnergy += Math.abs(frame[j] - frame[j-1]); // 差分で高域抽出
-        const sharpness = highEnergy / (rms + 0.001);
+        for (let j = 1; j < frame.length; j++) highEnergy += Math.abs(frame[j] - frame[j-1]);
+        const sharpness = Math.min(1.0, highEnergy / (rms * 20 + 0.1)); // 0-1に収まるよう調整
 
         fingerprint.push({ e: rms, c: centroid, s: sharpness });
     }
 
-    // 正規化
     const maxE = Math.max(...fingerprint.map(p => p.e));
-    if (maxE > 0) {
-        return fingerprint.map(p => ({ e: p.e / maxE, c: p.c, s: p.s / 10 }));
-    }
-    return fingerprint;
+    return maxE > 0 ? fingerprint.map(p => ({ e: p.e / maxE, c: p.c, s: p.s })) : fingerprint;
 }
 
 async function prepareData() {
     const db = await initDB();
     const ids = Object.keys(POKEMON_DB);
     let loadedCount = 0;
-
     for (const id of ids) {
         const tx = db.transaction(STORE_NAME, 'readonly');
-        const cached = await new Promise(r => {
-            const req = tx.objectStore(STORE_NAME).get(id);
-            req.onsuccess = () => r(req.result);
-        });
-
-        if (cached) {
-            signatures[id] = cached;
-        } else {
+        const cached = await new Promise(r => { const req = tx.objectStore(STORE_NAME).get(id); req.onsuccess = () => r(req.result); });
+        if (cached) { signatures[id] = cached; } else {
             try {
                 const resp = await fetch(`${BASE_URL}${id}.${POKEMON_DB[id].ext}`);
-                if (!resp.ok) throw new Error();
                 const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
                 const sig = await extractHighResFingerprint(audioBuffer);
                 db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(sig, id);
@@ -436,8 +418,7 @@ async function prepareData() {
         }
         loadedCount++;
         const percent = Math.floor((loadedCount / ids.length) * 100);
-        progressInner.style.width = `${percent}%`;
-        progressPercent.innerText = `${percent}%`;
+        progressInner.style.width = `${percent}%`; progressPercent.innerText = `${percent}%`;
     }
     initOverlay.style.display = 'none';
 }
@@ -501,41 +482,36 @@ function trimSilence(sig) {
     return s > e ? [] : sig.slice(s, e + 1);
 }
 
-// 精度向上の肝：時間加重マルチパラメータ・マッチング
+// 精度向上の肝：感度を緩めつつ相対的な一致度を算出
 function compareFingerprints(sig1, sig2) {
     const s1 = trimSilence(sig1), s2 = trimSilence(sig2);
     if (s1.length === 0 || s2.length === 0) return 0;
     let sh = s1.length < s2.length ? s1 : s2, lg = s1.length < s2.length ? s2 : s1, minD = Infinity;
     
-    // スライディングウィンドウ
-    const limit = lg.length - sh.length;
-    for (let o = 0; o <= limit; o++) {
+    for (let o = 0; o <= lg.length - sh.length; o++) {
         let d = 0;
         for (let i = 0; i < sh.length; i++) {
-            // 時間加重：音の出だし（最初の30%）を1.5倍重視
-            const weight = (i / sh.length < 0.3) ? 1.5 : 1.0;
-            
-            const de = sh[i].e - lg[o + i].e; // 音量差
-            const dc = sh[i].c - lg[o + i].c; // 周波数重心差
-            const ds = sh[i].s - lg[o + i].s; // 音の鋭さ差
-            
-            d += ((de * de) + (dc * dc * 3.0) + (ds * ds)) * weight;
+            const weight = (i / sh.length < 0.3) ? 1.2 : 1.0;
+            const de = (sh[i].e - lg[o + i].e) * 0.8; 
+            const dc = (sh[i].c - lg[o + i].c) * 1.5; 
+            const ds = (sh[i].s - lg[o + i].s) * 0.7;
+            d += ((de * de) + (dc * dc) + (ds * ds)) * weight;
         }
         d = Math.sqrt(d / sh.length);
         if (d < minD) minD = d;
     }
     
     const ratio = sh.length / lg.length;
-    let score = Math.max(0, 100 - minD * 180);
-    if (ratio < 0.6) score *= (ratio * 1.5); // 長さの極端な違いを厳しく判定
-    return score;
+    // スコア計算式を緩和 (180 -> 110) し、0%になりにくく調整
+    let score = Math.max(5, 100 - minD * 110); 
+    if (ratio < 0.5) score *= (ratio * 1.8);
+    return Math.min(99, score);
 }
 
 function identifyPokemon(inputSig) {
     let matches = Object.keys(signatures).map(id => ({ id, score: compareFingerprints(inputSig, signatures[id]) }));
     matches.sort((a, b) => b.score - a.score);
 
-    // 常に上位10件を表示（判定が低くてもリストを埋める）
     if (matches.length > 0) {
         const top = matches[0];
         resId.innerText = `No.${top.id}`; resName.innerText = POKEMON_DB[top.id].name; resScore.innerText = `MATCH: ${Math.floor(top.score)}%`;
@@ -549,9 +525,8 @@ function identifyPokemon(inputSig) {
             const m = matches[j + 1];
             if (m) {
                 subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
-            } else { subs[j].n.innerText = "---"; subs[j].s.innerText = `${subs[j].l}: --%`; subs[j].i.innerText = "No.----"; }
+            }
         }
-
         resMinorList.innerHTML = "";
         for (let k = 4; k < 10; k++) {
             const m = matches[k];
@@ -562,7 +537,7 @@ function identifyPokemon(inputSig) {
             }
         }
         resultContainer.style.display = 'block'; statusEl.innerText = "ID COMPLETE";
-    } else { statusEl.innerText = "COULD NOT ID"; }
+    }
 }
 
 btnRecord.addEventListener('mousedown', startRecording); btnRecord.addEventListener('mouseup', stopRecording);
