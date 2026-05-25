@@ -49,8 +49,10 @@
         .reg-item.newest { border-color: var(--primary); }
         .reg-item-id { font-weight: normal; opacity: 0.7; }
         .reg-item-name { font-weight: bold; font-size: 10px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; transition: all 0.2s; }
+        #btn-quiz-play svg { fill: white; transition: fill 0.2s; }
         #btn-quiz-play.playing { border-color: var(--primary); }
+        #btn-quiz-play.playing svg { fill: var(--primary); }
         #btn-quiz-play.disabled { opacity: 0.3; cursor: not-allowed; }
         .choice-btn { background: #1c1c1e; padding: 15px; border-radius: 10px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 10px; }
         .choice-btn.correct { background: var(--correct); }
@@ -1018,18 +1020,23 @@ function nextQuiz() {
 async function playQuizCry() {
     if (registeredQuizIds.length < 3) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
     const btn = document.getElementById('btn-quiz-play');
     if (btn.classList.contains('playing')) return;
     btn.classList.add('playing');
     try {
         const resp = await fetch(`${BASE_URL}${quizCorrectId}.${POKEMON_DB[quizCorrectId].ext}`);
+        if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
         const audioBuffer = await audioCtx.decodeAudioData(await resp.arrayBuffer());
         const source = audioCtx.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(audioCtx.destination);
         source.onended = () => btn.classList.remove('playing');
         source.start(0);
-    } catch (e) { btn.classList.remove('playing'); }
+    } catch (e) {
+        console.error("Playback failed:", e);
+        btn.classList.remove('playing');
+    }
 }
 
 function checkAnswer(index) {
