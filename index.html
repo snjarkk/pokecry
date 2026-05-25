@@ -9,49 +9,39 @@
         body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: #1c1c1e; color: var(--primary); padding: 10px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0; }
         h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
-
         .mode-tabs { display: flex; background: #1c1c1e; padding: 5px; gap: 5px; flex-shrink: 0; border-bottom: 1px solid #333; }
         .tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
         .tab.active { background: #333; color: var(--primary); }
-
+        .registry-notice { background: #000; color: #555; font-size: 10px; padding: 5px 10px; text-align: center; border-bottom: 1px solid #222; font-weight: bold; }
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
-        
         .mode-section { width: 100%; display: none; flex-direction: column; align-items: center; }
         .mode-section.active { display: flex; }
-
-        /* 識別モード */
         .recorder-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 340px; min-height: 110px; margin-bottom: 5px; }
         .visualizer-container { flex: 1; height: 90px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2c2c2e; overflow: hidden; }
         #visualizer { width: 100%; height: 100%; display: block; }
         #btn-record { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 5px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
         #btn-record.recording { box-shadow: 0 0 30px rgba(255, 69, 58, 0.4); }
         #status { font-size: 11px; font-weight: bold; color: var(--subtext); text-transform: uppercase; margin-top: 5px; margin-bottom: 15px; }
-        
         #result-container { width: 100%; max-width: 340px; }
         .result-card { background: var(--card); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid var(--primary); margin-bottom: 10px; }
         .pokemon-id { color: #ffffff; font-size: 12px; margin-bottom: 2px; font-weight: bold; }
         .pokemon-name { font-size: 26px; font-weight: bold; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .match-score { font-size: 12px; background: #3a3a3c; padding: 2px 12px; border-radius: 6px; display: inline-block; color: var(--primary); font-weight: bold; }
-
         .sub-results { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; margin-bottom: 10px; }
         .sub-card { background: var(--card); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; border: 1px solid #333; }
         .sub-rank-score { font-size: 10px; color: #ffffff; background: #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; min-width: 55px; text-align: center; }
         .sub-id { font-size: 11px; color: #ffffff; font-weight: bold; margin-right: 8px; }
         .sub-name { font-weight: bold; font-size: 20px; color: #ffffff; }
-
         #res-minor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; }
         .minor-item { display: flex; align-items: flex-start; gap: 8px; border-bottom: 1px solid #252527; padding-bottom: 5px; }
         .minor-rank-box { width: 24px; height: 34px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #fff; flex-shrink: 0; }
         .minor-id { font-size: 10px; color: #ffffff; font-weight: bold; opacity: 0.9; }
         .minor-name { font-size: 16px; font-weight: bold; color: #eeeeee; }
-
-        /* クイズモード */
         .quiz-container { width: 100%; max-width: 340px; margin-top: 5px; }
         .quiz-reg-area { width: 100%; background: #1c1c1e; padding: 10px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; box-sizing: border-box; }
         .reg-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
         #input-reg-id { flex: 1; background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; font-size: 16px; outline: none; }
         #btn-reg-add { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; }
-        
         .reg-list-title { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         #reg-pokemon-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
         .reg-item { background: #333; font-size: 8px; padding: 6px 4px; border-radius: 6px; color: #eee; display: flex; flex-direction: column; align-items: center; border: 1px solid transparent; cursor: pointer; text-align: center; }
@@ -59,19 +49,15 @@
         .reg-item.newest { border-color: var(--primary); }
         .reg-item-id { font-weight: normal; opacity: 0.7; }
         .reg-item-name { font-weight: bold; font-size: 10px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
         #btn-quiz-play { width: 80px; height: 80px; border-radius: 50%; background: #333; border: 5px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
         #btn-quiz-play.playing { border-color: var(--primary); }
         #btn-quiz-play.disabled { opacity: 0.3; cursor: not-allowed; }
-
         .choice-btn { background: #1c1c1e; padding: 15px; border-radius: 10px; border: 1px solid #333; color: white; font-size: 18px; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 10px; }
         .choice-btn.correct { background: var(--correct); }
         .choice-btn.wrong { background: var(--wrong); }
         .choice-btn.disabled { opacity: 0.3; cursor: not-allowed; }
-
         #quiz-feedback { font-size: 18px; font-weight: bold; margin-top: 10px; height: 24px; text-align: center; }
         #btn-next-quiz { margin: 15px auto; background: #333; color: white; padding: 10px 25px; border-radius: 20px; font-weight: bold; border: none; display: none; cursor: pointer; }
-
         footer { padding: 10px; text-align: center; font-size: 10px; color: #333; flex-shrink: 0; }
         #init-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
         #progress-bar { width: 70%; height: 4px; background: #1c1c1e; border-radius: 2px; margin-top: 15px; overflow: hidden; }
@@ -79,16 +65,12 @@
     </style>
 </head>
 <body>
-
-<header>
-    <h1>Pokémon Cry</h1>
-</header>
-
+<header><h1>Pokémon Cry</h1></header>
 <div class="mode-tabs">
     <div class="tab" onclick="switchMode('id')">IDENTIFY</div>
     <div class="tab active" onclick="switchMode('quiz')">QUIZ</div>
 </div>
-
+<div class="registry-notice">現在の登録ポケモンは No.0649：ゲノセクト までです。</div>
 <main>
     <div id="id-section" class="mode-section">
         <div class="recorder-row">
@@ -113,19 +95,16 @@
             </div>
         </div>
     </div>
-
     <div id="quiz-section" class="mode-section active">
         <div class="quiz-reg-area">
             <div class="reg-input-row">
                 <input type="text" id="input-reg-id" placeholder="No. または 名前" list="pokemon-names-list">
-                <datalist id="pokemon-names-list">
-                </datalist>
+                <datalist id="pokemon-names-list"></datalist>
                 <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
             </div>
             <div class="reg-list-title"><span>クイズ対象 (最大30匹 / タップで削除)</span><span id="reg-count">0/30</span></div>
             <div id="reg-pokemon-list"></div>
         </div>
-        
         <div class="quiz-container">
             <div id="btn-quiz-play"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
             <div class="choices" id="quiz-choices">
@@ -138,156 +117,666 @@
         </div>
     </div>
 </main>
-
 <div id="init-overlay">
     <div id="init-text" style="font-size: 16px; font-weight: bold; letter-spacing: 2px;">START SYSTEM</div>
     <div id="progress-bar"><div id="progress-inner"></div></div>
     <div id="progress-percent" style="margin-top:8px; font-size:12px;">0%</div>
 </div>
-
 <footer>&copy; Pokémon Cry System</footer>
-
 <script>
 const POKEMON_DB = {
-  "0001": { name: "フシギダネ", ext: "wav" }, "0002": { name: "フシギソウ", ext: "wav" }, "0003": { name: "フシギバナ", ext: "wav" },
-  "0004": { name: "ヒトカゲ", ext: "wav" }, "0005": { name: "リザード", ext: "wav" }, "0006": { name: "リザードン", ext: "wav" },
-  "0007": { name: "ゼニガメ", ext: "wav" }, "0008": { name: "カメール", ext: "wav" }, "0009": { name: "カメックス", ext: "wav" },
-  "0010": { name: "キャタピー", ext: "wav" }, "0011": { name: "トランセル", ext: "wav" }, "0012": { name: "バタフリー", ext: "wav" },
-  "0013": { name: "ビードル", ext: "wav" }, "0014": { name: "コクーン", ext: "wav" }, "0015": { name: "スピアー", ext: "wav" },
-  "0016": { name: "ポッポ", ext: "wav" }, "0017": { name: "ピジョン", ext: "wav" }, "0018": { name: "ピジョット", ext: "wav" },
-  "0019": { name: "コラッタ", ext: "wav" }, "0020": { name: "ラッタ", ext: "wav" }, "0021": { name: "オニスズメ", ext: "wav" },
-  "0022": { name: "オニドリル", ext: "wav" }, "0023": { name: "アーボ", ext: "wav" }, "0024": { name: "アーボック", ext: "wav" },
-  "0025": { name: "ピカチュウ", ext: "wav" }, "0026": { name: "ライチュウ", ext: "wav" }, "0027": { name: "サンド", ext: "wav" },
-  "0028": { name: "サンドパン", ext: "wav" }, "0029": { name: "ニドラン\u2640", ext: "wav" }, "0030": { name: "ニドリーナ", ext: "wav" },
-  "0031": { name: "ニドクイン", ext: "wav" }, "0032": { name: "ニドラン\u2642", ext: "wav" }, "0033": { name: "ニドリーノ", ext: "wav" },
-  "0034": { name: "ニドキング", ext: "wav" }, "0035": { name: "ピッピ", ext: "wav" }, "0036": { name: "ピクシー", ext: "wav" },
-  "0037": { name: "ロコン", ext: "wav" }, "0038": { name: "キュウコン", ext: "wav" }, "0039": { name: "プリン", ext: "wav" },
-  "0040": { name: "プクリン", ext: "wav" }, "0041": { name: "ズバット", ext: "wav" }, "0042": { name: "ゴルバット", ext: "wav" },
-  "0043": { name: "ナゾノクサ", ext: "wav" }, "0044": { name: "クサイハナ", ext: "wav" }, "0045": { name: "ラフレシア", ext: "wav" },
-  "0046": { name: "パラス", ext: "wav" }, "0047": { name: "パラセクト", ext: "wav" }, "0048": { name: "コンパン", ext: "wav" },
-  "0049": { name: "モルフォン", ext: "wav" }, "0050": { name: "ディグダ", ext: "wav" }, "0051": { name: "ダグトリオ", ext: "wav" },
-  "0052": { name: "ニャース", ext: "wav" }, "0053": { name: "ペルシアン", ext: "wav" }, "0054": { name: "コダック", ext: "wav" },
-  "0055": { name: "ゴルダック", ext: "wav" }, "0056": { name: "マンキー", ext: "wav" }, "0057": { name: "オコリザル", ext: "wav" },
-  "0058": { name: "ガーディ", ext: "wav" }, "0059": { name: "ウインディ", ext: "wav" }, "0060": { name: "ニョロモ", ext: "wav" },
-  "0061": { name: "ニョロゾ", ext: "wav" }, "0062": { name: "ニョロボン", ext: "wav" }, "0063": { name: "ケーシィ", ext: "wav" },
-  "0064": { name: "ユンゲラー", ext: "wav" }, "0065": { name: "フーディン", ext: "wav" }, "0066": { name: "ワンリキー", ext: "wav" },
-  "0067": { name: "ゴーリキー", ext: "wav" }, "0068": { name: "カイリキー", ext: "wav" }, "0069": { name: "マダツボミ", ext: "wav" },
-  "0070": { name: "ウツドン", ext: "wav" }, "0071": { name: "ウツボット", ext: "wav" }, "0072": { name: "メノクラゲ", ext: "wav" },
-  "0073": { name: "ドククラゲ", ext: "wav" }, "0074": { name: "イシツブテ", ext: "wav" }, "0075": { name: "ゴローン", ext: "wav" },
-  "0076": { name: "ゴローニャ", ext: "wav" }, "0077": { name: "ポニータ", ext: "wav" }, "0078": { name: "ギャロップ", ext: "wav" },
-  "0079": { name: "ヤドン", ext: "wav" }, "0080": { name: "ヤドラン", ext: "wav" }, "0081": { name: "コイル", ext: "wav" },
-  "0082": { name: "レアコイル", ext: "wav" }, "0083": { name: "カモネギ", ext: "wav" }, "0084": { name: "ドードー", ext: "wav" },
-  "0085": { name: "ドードリオ", ext: "wav" }, "0086": { name: "パウワウ", ext: "wav" }, "0087": { name: "ジュゴン", ext: "wav" },
-  "0088": { name: "ベトベター", ext: "wav" }, "0089": { name: "ベトベトン", ext: "wav" }, "0090": { name: "シェルダー", ext: "wav" },
-  "0091": { name: "パルシェン", ext: "wav" }, "0092": { name: "ゴース", ext: "wav" }, "0093": { name: "ゴースト", ext: "wav" },
-  "0094": { name: "ゲンガー", ext: "wav" }, "0095": { name: "イワーク", ext: "wav" }, "0096": { name: "スリープ", ext: "wav" },
-  "0097": { name: "スリーパー", ext: "wav" }, "0098": { name: "クラブ", ext: "wav" }, "0099": { name: "キングラー", ext: "wav" },
-  "0100": { name: "ビリリダマ", ext: "wav" }, "0101": { name: "マルマイン", ext: "wav" }, "0102": { name: "タマタマ", ext: "wav" },
-  "0103": { name: "ナッシー", ext: "wav" }, "0104": { name: "カラカラ", ext: "wav" }, "0105": { name: "ガラガラ", ext: "wav" },
-  "0106": { name: "サワムラー", ext: "wav" }, "0107": { name: "エビワラー", ext: "wav" }, "0108": { name: "ベロリンガ", ext: "wav" },
-  "0109": { name: "ドガース", ext: "wav" }, "0110": { name: "マタドガス", ext: "wav" }, "0111": { name: "サイホーン", ext: "wav" },
-  "0112": { name: "サイドン", ext: "wav" }, "0113": { name: "ラッキー", ext: "wav" }, "0114": { name: "モンジャラ", ext: "wav" },
-  "0115": { name: "ガルーラ", ext: "wav" }, "0116": { name: "タッツー", ext: "wav" }, "0117": { name: "シードラ", ext: "wav" },
-  "0118": { name: "トサキント", ext: "wav" }, "0119": { name: "アズマオウ", ext: "wav" }, "0120": { name: "ヒトデマン", ext: "wav" },
-  "0121": { name: "スターミー", ext: "wav" }, "0122": { name: "バリヤード", ext: "wav" }, "0123": { name: "ストライク", ext: "wav" },
-  "0124": { name: "ルージュラ", ext: "wav" }, "0125": { name: "エレブー", ext: "wav" }, "0126": { name: "ブーバー", ext: "wav" },
-  "0127": { name: "カイロス", ext: "wav" }, "0128": { name: "ケンタロス", ext: "wav" }, "0129": { name: "コイキング", ext: "wav" },
-  "0130": { name: "ギャラドス", ext: "wav" }, "0131": { name: "ラプラス", ext: "wav" }, "0132": { name: "メタモン", ext: "wav" },
-  "0133": { name: "イーブイ", ext: "wav" }, "0134": { name: "シャワーズ", ext: "wav" }, "0135": { name: "サンダース", ext: "wav" },
-  "0136": { name: "ブースター", ext: "wav" }, "0137": { name: "ポリゴン", ext: "wav" }, "0138": { name: "オムナイト", ext: "wav" },
-  "0139": { name: "オムスター", ext: "wav" }, "0140": { name: "カブト", ext: "wav" }, "0141": { name: "カブトプス", ext: "wav" },
-  "0142": { name: "プテラ", ext: "wav" }, "0143": { name: "カびゴン", ext: "wav" }, "0144": { name: "フリーザー", ext: "wav" },
-  "0145": { name: "サンダー", ext: "wav" }, "0146": { name: "ファイヤー", ext: "wav" }, "0147": { name: "ミニリュウ", ext: "wav" },
-  "0148": { name: "ハクリュー", ext: "wav" }, "0149": { name: "カイリュー", ext: "wav" }, "0150": { name: "ミュウツー", ext: "wav" },
-  "0151": { name: "ミュウ", ext: "wav" }, "0152": { name: "チコリータ", ext: "wav" }, "0153": { name: "ベイリーフ", ext: "wav" },
-  "0154": { name: "メガニウム", ext: "wav" }, "0155": { name: "ヒノアラシ", ext: "wav" }, "0156": { name: "マグマラシ", ext: "wav" },
-  "0157": { name: "バクフーン", ext: "wav" }, "0158": { name: "ワニノコ", ext: "wav" }, "0159": { name: "アリゲイツ", ext: "wav" },
-  "0160": { name: "オーダイル", ext: "wav" }, "0161": { name: "オタチ", ext: "wav" }, "0162": { name: "オオタチ", ext: "wav" },
-  "0163": { name: "ホーホー", ext: "wav" }, "0164": { name: "ヨルノズク", ext: "wav" }, "0165": { name: "レディバ", ext: "wav" },
-  "0166": { name: "レディアン", ext: "wav" }, "0167": { name: "イトマル", ext: "wav" }, "0168": { name: "アリアドス", ext: "wav" },
-  "0169": { name: "クロバット", ext: "wav" }, "0170": { name: "チョンチー", ext: "wav" }, "0171": { name: "ランターン", ext: "wav" },
-  "0172": { name: "ピチュー", ext: "wav" }, "0173": { name: "ピィ", ext: "wav" }, "0174": { name: "ププリン", ext: "wav" },
-  "0175": { name: "トゲピー", ext: "wav" }, "0176": { name: "トゲチック", ext: "wav" }, "0177": { name: "ネイティ", ext: "wav" },
-  "0178": { name: "ネイティオ", ext: "wav" }, "0179": { name: "メリープ", ext: "wav" }, "0180": { name: "モココ", ext: "wav" },
-  "0181": { name: "デンリュウ", ext: "wav" }, "0182": { name: "キレイハナ", ext: "wav" }, "0183": { name: "マリル", ext: "wav" },
-  "0184": { name: "マリルリ", ext: "wav" }, "0185": { name: "ウソッキー", ext: "wav" }, "0186": { name: "ニョロトノ", ext: "wav" },
-  "0187": { name: "ハネッコ", ext: "wav" }, "0188": { name: "ポポッコ", ext: "wav" }, "0189": { name: "ワタッコ", ext: "wav" },
-  "0190": { name: "エイパム", ext: "wav" }, "0191": { name: "ヒマナッツ", ext: "wav" }, "0192": { name: "キマワリ", ext: "wav" },
-  "0193": { name: "ヤンヤンマ", ext: "wav" }, "0194": { name: "ウパー", ext: "wav" }, "0195": { name: "ヌオー", ext: "wav" },
-  "0196": { name: "エーフィ", ext: "wav" }, "0197": { name: "ブラッキー", ext: "wav" }, "0198": { name: "ヤミカラス", ext: "wav" },
-  "0199": { name: "ヤドキング", ext: "wav" }, "0200": { name: "ムウマ", ext: "wav" }, "0201": { name: "アンノーン", ext: "wav" },
-  "0202": { name: "ソーナンス", ext: "wav" }, "0203": { name: "キリンリキ", ext: "wav" }, "0204": { name: "クヌギダマ", ext: "wav" },
-  "0205": { name: "フォレトス", ext: "wav" }, "0206": { name: "ノコッチ", ext: "wav" }, "0207": { name: "グライガー", ext: "wav" },
-  "0208": { name: "ハガネール", ext: "wav" }, "0209": { name: "ブルー", ext: "wav" }, "0210": { name: "グランブル", ext: "wav" },
-  "0211": { name: "ハリーセン", ext: "wav" }, "0212": { name: "ハッサム", ext: "wav" }, "0213": { name: "ツボツボ", ext: "wav" },
-  "0214": { name: "ヘラクロス", ext: "wav" }, "0215": { name: "ニューラ", ext: "wav" }, "0216": { name: "ヒメグマ", ext: "wav" },
-  "0217": { name: "リングマ", ext: "wav" }, "0218": { name: "マグマッグ", ext: "wav" }, "0219": { name: "マグカルゴ", ext: "wav" },
-  "0220": { name: "ウリムー", ext: "wav" }, "0221": { name: "イノムー", ext: "wav" }, "0222": { name: "サニーゴ", ext: "wav" },
-  "0223": { name: "テッポウオ", ext: "wav" }, "0224": { name: "オクタン", ext: "wav" }, "0225": { name: "デリバード", ext: "wav" },
-  "0226": { name: "マンタイン", ext: "wav" }, "0227": { name: "エアームド", ext: "wav" }, "0228": { name: "デルビル", ext: "wav" },
-  "0229": { name: "ヘルガー", ext: "wav" }, "0230": { name: "キングドラ", ext: "wav" }, "0231": { name: "ゴマゾウ", ext: "wav" },
-  "0232": { name: "ドンファン", ext: "wav" }, "0233": { name: "ポリゴン\uff12", ext: "wav" }, "0234": { name: "オドシシ", ext: "wav" },
-  "0235": { name: "ドーブル", ext: "wav" }, "0236": { name: "バルキー", ext: "wav" }, "0237": { name: "カポエラー", ext: "wav" },
-  "0238": { name: "ムチュール", ext: "wav" }, "0239": { name: "エレキッド", ext: "wav" }, "0240": { name: "ブビィ", ext: "wav" },
-  "0241": { name: "ミルタンク", ext: "wav" }, "0242": { name: "ハピナス", ext: "wav" }, "0243": { name: "ライコウ", ext: "wav" },
-  "0244": { name: "エンテイ", ext: "wav" }, "0245": { name: "スイクン", ext: "wav" }, "0246": { name: "ヨーギラス", ext: "wav" },
-  "0247": { name: "サナギラス", ext: "wav" }, "0248": { name: "バンギラス", ext: "wav" }, "0249": { name: "ルギア", ext: "wav" },
-  "0250": { name: "ホウオウ", ext: "wav" }, "0251": { name: "セレビィ", ext: "wav" }, "0252": { name: "キモリ", ext: "wav" },
-  "0253": { name: "ジュプトル", ext: "wav" }, "0254": { name: "ジュカイン", ext: "wav" }, "0255": { name: "アチャモ", ext: "wav" },
-  "0256": { name: "ワカシャモ", ext: "wav" }, "0257": { name: "バシャーモ", ext: "wav" }, "0258": { name: "ミズゴロウ", ext: "wav" },
-  "0259": { name: "ヌマクロー", ext: "wav" }, "0260": { name: "ラグラージ", ext: "wav" }, "0261": { name: "ポチエナ", ext: "wav" },
-  "0262": { name: "グラエナ", ext: "wav" }, "0263": { name: "ジグザグマ", ext: "wav" }, "0264": { name: "マッスグマ", ext: "wav" },
-  "0265": { name: "ケムッソ", ext: "wav" }, "0266": { name: "カラサリス", ext: "wav" }, "0267": { name: "アゲハント", ext: "wav" },
-  "0268": { name: "マユルド", ext: "wav" }, "0269": { name: "ドクケイル", ext: "wav" }, "0270": { name: "ハスボー", ext: "wav" },
-  "0271": { name: "ハスブレロ", ext: "wav" }, "0272": { name: "ルンパッパ", ext: "wav" }, "0273": { name: "タネボー", ext: "wav" },
-  "0274": { name: "コノハナ", ext: "wav" }, "0275": { name: "ダーテング", ext: "wav" }, "0276": { name: "スバメ", ext: "wav" },
-  "0277": { name: "オオスバメ", ext: "wav" }, "0278": { name: "キャモメ", ext: "wav" }, "0279": { name: "ペリッパー", ext: "wav" },
-  "0280": { name: "ラルトス", ext: "wav" }, "0281": { name: "キルリア", ext: "wav" }, "0282": { name: "サーナイト", ext: "wav" },
-  "0283": { name: "アメタマ", ext: "wav" }, "0284": { name: "アメモース", ext: "wav" }, "0285": { name: "キノココ", ext: "wav" },
-  "0286": { name: "キノガッサ", ext: "wav" }, "0287": { name: "ナマケロ", ext: "wav" }, "0288": { name: "ヤルキモノ", ext: "wav" },
-  "0289": { name: "ケッキング", ext: "wav" }, "0290": { name: "ツチニン", ext: "wav" }, "0291": { name: "テッカニン", ext: "wav" },
-  "0292": { name: "ヌケニン", ext: "wav" }, "0293": { name: "ゴニョニョ", ext: "wav" }, "0294": { name: "ドゴーム", ext: "wav" },
-  "0295": { name: "バクオング", ext: "wav" }, "0296": { name: "マクノシタ", ext: "wav" }, "0297": { name: "ハリテヤマ", ext: "wav" },
-  "0298": { name: "ルリリ", ext: "wav" }, "0299": { name: "ノズパス", ext: "wav" }, "0300": { name: "エネコ", ext: "wav" },
-  "0301": { name: "エネコロロ", ext: "wav" }, "0302": { name: "ヤミラミ", ext: "wav" }, "0303": { name: "クチート", ext: "wav" },
-  "0304": { name: "ココドラ", ext: "wav" }, "0305": { name: "コドラ", ext: "wav" }, "0306": { name: "ボスゴドラ", ext: "wav" },
-  "0307": { name: "アサナン", ext: "wav" }, "0308": { name: "チャーレム", ext: "wav" }, "0309": { name: "ラクライ", ext: "wav" },
-  "0310": { name: "ライボルト", ext: "wav" }, "0311": { name: "プラスル", ext: "wav" }, "0312": { name: "マイナン", ext: "wav" },
-  "0313": { name: "バルビート", ext: "wav" }, "0314": { name: "イルミーゼ", ext: "wav" }, "0315": { name: "ロゼリア", ext: "wav" },
-  "0316": { name: "ゴクリン", ext: "wav" }, "0317": { name: "マルノーム", ext: "wav" }, "0318": { name: "キバニア", ext: "wav" },
-  "0319": { name: "サメハダー", ext: "wav" }, "0320": { name: "ホエルコ", ext: "wav" }, "0321": { name: "ホエルオー", ext: "wav" },
-  "0322": { name: "ドンメル", ext: "wav" }, "0323": { name: "バクーダ", ext: "wav" }, "0324": { name: "コータス", ext: "wav" },
-  "0325": { name: "バネブー", ext: "wav" }, "0326": { name: "ブーピッグ", ext: "wav" }, "0327": { name: "パッチール", ext: "wav" },
-  "0328": { name: "ナックラー", ext: "wav" }, "0329": { name: "ビブラーバ", ext: "wav" }, "0330": { name: "フライゴン", ext: "wav" },
-  "0331": { name: "サボネア", ext: "wav" }, "0332": { name: "ノクタス", ext: "wav" }, "0333": { name: "チルット", ext: "wav" },
-  "0334": { name: "チルタリス", ext: "wav" }, "0335": { name: "ザングース", ext: "wav" }, "0336": { name: "ハブネーク", ext: "wav" },
-  "0337": { name: "ルナトーン", ext: "wav" }, "0338": { name: "ソルロック", ext: "wav" }, "0339": { name: "ドジョッチ", ext: "wav" },
-  "0340": { name: "ナマズン", ext: "wav" }, "0341": { name: "ヘイガニ", ext: "wav" }, "0342": { name: "シザリガー", ext: "wav" },
-  "0343": { name: "ヤジロン", ext: "wav" }, "0344": { name: "ネンドール", ext: "wav" }, "0345": { name: "リリーラ", ext: "wav" },
-  "0346": { name: "ユレイドル", ext: "wav" }, "0347": { name: "アノプス", ext: "wav" }, "0348": { name: "アーマルド", ext: "wav" },
-  "0349": { name: "ヒンバス", ext: "wav" }, "0350": { name: "ミロカロス", ext: "wav" }, "0351": { name: "ポワルン", ext: "wav" },
-  "0352": { name: "カクレオン", ext: "wav" }, "0353": { name: "カゲボウズ", ext: "wav" }, "0354": { name: "ジュペッタ", ext: "wav" },
-  "0355": { name: "ヨマワル", ext: "wav" }, "0356": { name: "サマヨール", ext: "wav" }, "0357": { name: "トロピウス", ext: "wav" },
-  "0358": { name: "チリーン", ext: "wav" }, "0359": { name: "アブソル", ext: "wav" }, "0360": { name: "ソーナノ", ext: "wav" },
-  "0361": { name: "ユキワラシ", ext: "wav" }, "0362": { name: "オニゴーリ", ext: "wav" }, "0363": { name: "タマザラシ", ext: "wav" },
-  "0364": { name: "トドグラー", ext: "wav" }, "0365": { name: "トドゼルガ", ext: "wav" }, "0366": { name: "パールル", ext: "wav" },
-  "0367": { name: "ハンテール", ext: "wav" }, "0368": { name: "サクラビス", ext: "wav" }, "0369": { name: "ジーランス", ext: "wav" },
-  "0370": { name: "ラブカス", ext: "wav" }, "0371": { name: "タツベイ", ext: "wav" }, "0372": { name: "コモルー", ext: "wav" },
-  "0373": { name: "ボーマンダ", ext: "wav" }, "0374": { name: "ダンバル", ext: "wav" }, "0375": { name: "メタング", ext: "wav" },
-  "0376": { name: "メタグロス", ext: "wav" }, "0377": { name: "レジロック", ext: "wav" }, "0378": { name: "レジアイス", ext: "wav" },
-  "0379": { name: "レジスチル", ext: "wav" }, "0380": { name: "ラティアス", ext: "wav" }, "0381": { name: "ラティオス", ext: "wav" },
-  "0382": { name: "カイオーガ", ext: "wav" }, "0383": { name: "グラードン", ext: "wav" }, "0384": { name: "レックウザ", ext: "wav" },
-  "0385": { name: "ジラーチ", ext: "wav" }, "0386": { name: "デオキシス", ext: "wav" }, "0387": { name: "ナエトル", ext: "mp3" },
-  "0388": { name: "ハヤシガメ", ext: "mp3" }, "0389": { name: "ドダイトス", ext: "mp3" }, "0390": { name: "ヒコザル", ext: "mp3" },
-  "0391": { name: "モウカザル", ext: "mp3" }, "0392": { name: "ゴウカザル", ext: "mp3" }, "0393": { name: "ポッチャマ", ext: "mp3" },
-  "0394": { name: "ポッタイシ", ext: "mp3" }, "0395": { name: "エンペルト", ext: "mp3" }, "0396": { name: "ムックル", ext: "mp3" },
-  "0397": { name: "ムクバード", ext: "mp3" }, "0398": { name: "ムクホーク", ext: "mp3" }, "0399": { name: "ビッパ", ext: "mp3" },
-  "0400": { name: "ビーダル", ext: "mp3" }, "0401": { name: "コロボーシ", ext: "mp3" }, "0402": { name: "コロトック", ext: "mp3" },
-  "0403": { name: "コリンク", ext: "mp3" }, "0404": { name: "ルクシオ", ext: "mp3" }, "0405": { name: "レントラー", ext: "mp3" },
-  "0407": { name: "ロズレイド", ext: "mp3" }, "0448": { name: "ルカリオ", ext: "mp3" }, "0649": { name: "ゲノセクト", ext: "mp3" }
+  "0001": { name: "フシギダネ", ext: "wav" },
+  "0002": { name: "フシギソウ", ext: "wav" },
+  "0003": { name: "フシギバナ", ext: "wav" },
+  "0004": { name: "ヒトカゲ", ext: "wav" },
+  "0005": { name: "リザード", ext: "wav" },
+  "0006": { name: "リザードン", ext: "wav" },
+  "0007": { name: "ゼニガメ", ext: "wav" },
+  "0008": { name: "カメール", ext: "wav" },
+  "0009": { name: "カメックス", ext: "wav" },
+  "0010": { name: "キャタピー", ext: "wav" },
+  "0011": { name: "トランセル", ext: "wav" },
+  "0012": { name: "バタフリー", ext: "wav" },
+  "0013": { name: "ビードル", ext: "wav" },
+  "0014": { name: "コクーン", ext: "wav" },
+  "0015": { name: "スピアー", ext: "wav" },
+  "0016": { name: "ポッポ", ext: "wav" },
+  "0017": { name: "ピジョン", ext: "wav" },
+  "0018": { name: "ピジョット", ext: "wav" },
+  "0019": { name: "コラッタ", ext: "wav" },
+  "0020": { name: "ラッタ", ext: "wav" },
+  "0021": { name: "オニスズメ", ext: "wav" },
+  "0022": { name: "オニドリル", ext: "wav" },
+  "0023": { name: "アーボ", ext: "wav" },
+  "0024": { name: "アーボック", ext: "wav" },
+  "0025": { name: "ピカチュウ", ext: "wav" },
+  "0026": { name: "ライチュウ", ext: "wav" },
+  "0027": { name: "サンド", ext: "wav" },
+  "0028": { name: "サンドパン", ext: "wav" },
+  "0029": { name: "ニドラン♀", ext: "wav" },
+  "0030": { name: "ニドリーナ", ext: "wav" },
+  "0031": { name: "ニドクイン", ext: "wav" },
+  "0032": { name: "ニドラン♂", ext: "wav" },
+  "0033": { name: "ニドリーノ", ext: "wav" },
+  "0034": { name: "ニドキング", ext: "wav" },
+  "0035": { name: "ピッピ", ext: "wav" },
+  "0036": { name: "ピクシー", ext: "wav" },
+  "0037": { name: "ロコン", ext: "wav" },
+  "0038": { name: "キュウコン", ext: "wav" },
+  "0039": { name: "プリン", ext: "wav" },
+  "0040": { name: "プクリン", ext: "wav" },
+  "0041": { name: "ズバット", ext: "wav" },
+  "0042": { name: "ゴルバット", ext: "wav" },
+  "0043": { name: "ナゾノクサ", ext: "wav" },
+  "0044": { name: "クサイハナ", ext: "wav" },
+  "0045": { name: "ラフレシア", ext: "wav" },
+  "0046": { name: "パラス", ext: "wav" },
+  "0047": { name: "パラセクト", ext: "wav" },
+  "0048": { name: "コンパン", ext: "wav" },
+  "0049": { name: "モルフォン", ext: "wav" },
+  "0050": { name: "ディグダ", ext: "wav" },
+  "0051": { name: "ダグトリオ", ext: "wav" },
+  "0052": { name: "ニャース", ext: "wav" },
+  "0053": { name: "ペルシアン", ext: "wav" },
+  "0054": { name: "コダック", ext: "wav" },
+  "0055": { name: "ゴルダック", ext: "wav" },
+  "0056": { name: "マンキー", ext: "wav" },
+  "0057": { name: "オコリザル", ext: "wav" },
+  "0058": { name: "ガーディ", ext: "wav" },
+  "0059": { name: "ウインディ", ext: "wav" },
+  "0060": { name: "ニョロモ", ext: "wav" },
+  "0061": { name: "ニョロゾ", ext: "wav" },
+  "0062": { name: "ニョロボン", ext: "wav" },
+  "0063": { name: "ケーシィ", ext: "wav" },
+  "0064": { name: "ユンゲラー", ext: "wav" },
+  "0065": { name: "フーディン", ext: "wav" },
+  "0066": { name: "ワンリキー", ext: "wav" },
+  "0067": { name: "ゴーリキー", ext: "wav" },
+  "0068": { name: "カイリキー", ext: "wav" },
+  "0069": { name: "マダツボミ", ext: "wav" },
+  "0070": { name: "ウツドン", ext: "wav" },
+  "0071": { name: "ウツボット", ext: "wav" },
+  "0072": { name: "メノクラゲ", ext: "wav" },
+  "0073": { name: "ドククラゲ", ext: "wav" },
+  "0074": { name: "イシツブテ", ext: "wav" },
+  "0075": { name: "ゴローン", ext: "wav" },
+  "0076": { name: "ゴローニャ", ext: "wav" },
+  "0077": { name: "ポニータ", ext: "wav" },
+  "0078": { name: "ギャロップ", ext: "wav" },
+  "0079": { name: "ヤドン", ext: "wav" },
+  "0080": { name: "ヤドラン", ext: "wav" },
+  "0081": { name: "コイル", ext: "wav" },
+  "0082": { name: "レアコイル", ext: "wav" },
+  "0083": { name: "カモネギ", ext: "wav" },
+  "0084": { name: "ドードー", ext: "wav" },
+  "0085": { name: "ドードリオ", ext: "wav" },
+  "0086": { name: "パウワウ", ext: "wav" },
+  "0087": { name: "ジュゴン", ext: "wav" },
+  "0088": { name: "ベトベター", ext: "wav" },
+  "0089": { name: "ベトベトン", ext: "wav" },
+  "0090": { name: "シェルダー", ext: "wav" },
+  "0091": { name: "パルシェン", ext: "wav" },
+  "0092": { name: "ゴース", ext: "wav" },
+  "0093": { name: "ゴースト", ext: "wav" },
+  "0094": { name: "ゲンガー", ext: "wav" },
+  "0095": { name: "イワーク", ext: "wav" },
+  "0096": { name: "スリープ", ext: "wav" },
+  "0097": { name: "スリーパー", ext: "wav" },
+  "0098": { name: "クラブ", ext: "wav" },
+  "0099": { name: "キングラー", ext: "wav" },
+  "0100": { name: "ビリリダマ", ext: "wav" },
+  "0101": { name: "マルマイン", ext: "wav" },
+  "0102": { name: "タマタマ", ext: "wav" },
+  "0103": { name: "ナッシー", ext: "wav" },
+  "0104": { name: "カラカラ", ext: "wav" },
+  "0105": { name: "ガラガラ", ext: "wav" },
+  "0106": { name: "サワムラー", ext: "wav" },
+  "0107": { name: "エビワラー", ext: "wav" },
+  "0108": { name: "ベロリンガ", ext: "wav" },
+  "0109": { name: "ドガース", ext: "wav" },
+  "0110": { name: "マタドガス", ext: "wav" },
+  "0111": { name: "サイホーン", ext: "wav" },
+  "0112": { name: "サイドン", ext: "wav" },
+  "0113": { name: "ラッキー", ext: "wav" },
+  "0114": { name: "モンジャラ", ext: "wav" },
+  "0115": { name: "ガルーラ", ext: "wav" },
+  "0116": { name: "タッツー", ext: "wav" },
+  "0117": { name: "シードラ", ext: "wav" },
+  "0118": { name: "トサキント", ext: "wav" },
+  "0119": { name: "アズマオウ", ext: "wav" },
+  "0120": { name: "ヒトデマン", ext: "wav" },
+  "0121": { name: "スターミー", ext: "wav" },
+  "0122": { name: "バリヤード", ext: "wav" },
+  "0123": { name: "ストライク", ext: "wav" },
+  "0124": { name: "ルージュラ", ext: "wav" },
+  "0125": { name: "エレブー", ext: "wav" },
+  "0126": { name: "ブーバー", ext: "wav" },
+  "0127": { name: "カイロス", ext: "wav" },
+  "0128": { name: "ケンタロス", ext: "wav" },
+  "0129": { name: "コイキング", ext: "wav" },
+  "0130": { name: "ギャラドス", ext: "wav" },
+  "0131": { name: "ラプラス", ext: "wav" },
+  "0132": { name: "メタモン", ext: "wav" },
+  "0133": { name: "イーブイ", ext: "wav" },
+  "0134": { name: "シャワーズ", ext: "wav" },
+  "0135": { name: "サンダース", ext: "wav" },
+  "0136": { name: "ブースター", ext: "wav" },
+  "0137": { name: "ポリゴン", ext: "wav" },
+  "0138": { name: "オムナイト", ext: "wav" },
+  "0139": { name: "オムスター", ext: "wav" },
+  "0140": { name: "カブト", ext: "wav" },
+  "0141": { name: "カブトプス", ext: "wav" },
+  "0142": { name: "プテラ", ext: "wav" },
+  "0143": { name: "カビゴン", ext: "wav" },
+  "0144": { name: "フリーザー", ext: "wav" },
+  "0145": { name: "サンダー", ext: "wav" },
+  "0146": { name: "ファイヤー", ext: "wav" },
+  "0147": { name: "ミニリュウ", ext: "wav" },
+  "0148": { name: "ハクリュー", ext: "wav" },
+  "0149": { name: "カイリュー", ext: "wav" },
+  "0150": { name: "ミュウツー", ext: "wav" },
+  "0151": { name: "ミュウ", ext: "wav" },
+  "0152": { name: "チコリータ", ext: "wav" },
+  "0153": { name: "ベイリーフ", ext: "wav" },
+  "0154": { name: "メガニウム", ext: "wav" },
+  "0155": { name: "ヒノアラシ", ext: "wav" },
+  "0156": { name: "マグマラシ", ext: "wav" },
+  "0157": { name: "バクフーン", ext: "wav" },
+  "0158": { name: "ワニノコ", ext: "wav" },
+  "0159": { name: "アリゲイツ", ext: "wav" },
+  "0160": { name: "オーダイル", ext: "wav" },
+  "0161": { name: "オタチ", ext: "wav" },
+  "0162": { name: "オオタチ", ext: "wav" },
+  "0163": { name: "ホーホー", ext: "wav" },
+  "0164": { name: "ヨルノズク", ext: "wav" },
+  "0165": { name: "レディバ", ext: "wav" },
+  "0166": { name: "レディアン", ext: "wav" },
+  "0167": { name: "イトマル", ext: "wav" },
+  "0168": { name: "アリアドス", ext: "wav" },
+  "0169": { name: "クロバット", ext: "wav" },
+  "0170": { name: "チョンチー", ext: "wav" },
+  "0171": { name: "ランターン", ext: "wav" },
+  "0172": { name: "ピチュー", ext: "wav" },
+  "0173": { name: "ピィ", ext: "wav" },
+  "0174": { name: "ププリン", ext: "wav" },
+  "0175": { name: "トゲピー", ext: "wav" },
+  "0176": { name: "トゲチック", ext: "wav" },
+  "0177": { name: "ネイティ", ext: "wav" },
+  "0178": { name: "ネイティオ", ext: "wav" },
+  "0179": { name: "メリープ", ext: "wav" },
+  "0180": { name: "モココ", ext: "wav" },
+  "0181": { name: "デンリュウ", ext: "wav" },
+  "0182": { name: "キレイハナ", ext: "wav" },
+  "0183": { name: "マリル", ext: "wav" },
+  "0184": { name: "マリルリ", ext: "wav" },
+  "0185": { name: "ウソッキー", ext: "wav" },
+  "0186": { name: "ニョロトノ", ext: "wav" },
+  "0187": { name: "ハネッコ", ext: "wav" },
+  "0188": { name: "ポポッコ", ext: "wav" },
+  "0189": { name: "ワタッコ", ext: "wav" },
+  "0190": { name: "エイパム", ext: "wav" },
+  "0191": { name: "ヒマナッツ", ext: "wav" },
+  "0192": { name: "キマワリ", ext: "wav" },
+  "0193": { name: "ヤンヤンマ", ext: "wav" },
+  "0194": { name: "ウパー", ext: "wav" },
+  "0195": { name: "ヌオー", ext: "wav" },
+  "0196": { name: "エーフィ", ext: "wav" },
+  "0197": { name: "ブラッキー", ext: "wav" },
+  "0198": { name: "ヤミカラス", ext: "wav" },
+  "0199": { name: "ヤドキング", ext: "wav" },
+  "0200": { name: "ムウマ", ext: "wav" },
+  "0201": { name: "アンノーン", ext: "wav" },
+  "0202": { name: "ソーナンス", ext: "wav" },
+  "0203": { name: "キリンリキ", ext: "wav" },
+  "0204": { name: "クヌギダマ", ext: "wav" },
+  "0205": { name: "フォレトス", ext: "wav" },
+  "0206": { name: "ノコッチ", ext: "wav" },
+  "0207": { name: "グライガー", ext: "wav" },
+  "0208": { name: "ハガネール", ext: "wav" },
+  "0209": { name: "ブルー", ext: "wav" },
+  "0210": { name: "グランブル", ext: "wav" },
+  "0211": { name: "ハリーセン", ext: "wav" },
+  "0212": { name: "ハッサム", ext: "wav" },
+  "0213": { name: "ツボツボ", ext: "wav" },
+  "0214": { name: "ヘラクロス", ext: "wav" },
+  "0215": { name: "ニューラ", ext: "wav" },
+  "0216": { name: "ヒメグマ", ext: "wav" },
+  "0217": { name: "リングマ", ext: "wav" },
+  "0218": { name: "マグマッグ", ext: "wav" },
+  "0219": { name: "マグカルゴ", ext: "wav" },
+  "0220": { name: "ウリムー", ext: "wav" },
+  "0221": { name: "イノムー", ext: "wav" },
+  "0222": { name: "サニーゴ", ext: "wav" },
+  "0223": { name: "テッポウオ", ext: "wav" },
+  "0224": { name: "オクタン", ext: "wav" },
+  "0225": { name: "デリバード", ext: "wav" },
+  "0226": { name: "マンタイン", ext: "wav" },
+  "0227": { name: "エアームド", ext: "wav" },
+  "0228": { name: "デルビル", ext: "wav" },
+  "0229": { name: "ヘルガー", ext: "wav" },
+  "0230": { name: "キングドラ", ext: "wav" },
+  "0231": { name: "ゴマゾウ", ext: "wav" },
+  "0232": { name: "ドンファン", ext: "wav" },
+  "0233": { name: "ポリゴン２", ext: "wav" },
+  "0234": { name: "オドシシ", ext: "wav" },
+  "0235": { name: "ドーブル", ext: "wav" },
+  "0236": { name: "バルキー", ext: "wav" },
+  "0237": { name: "カポエラー", ext: "wav" },
+  "0238": { name: "ムチュール", ext: "wav" },
+  "0239": { name: "エレキッド", ext: "wav" },
+  "0240": { name: "ブビィ", ext: "wav" },
+  "0241": { name: "ミルタンク", ext: "wav" },
+  "0242": { name: "ハピナス", ext: "wav" },
+  "0243": { name: "ライコウ", ext: "wav" },
+  "0244": { name: "エンテイ", ext: "wav" },
+  "0245": { name: "スイクン", ext: "wav" },
+  "0246": { name: "ヨーギラス", ext: "wav" },
+  "0247": { name: "サナギラス", ext: "wav" },
+  "0248": { name: "バンギラス", ext: "wav" },
+  "0249": { name: "ルギア", ext: "wav" },
+  "0250": { name: "ホウオウ", ext: "wav" },
+  "0251": { name: "セレビィ", ext: "wav" },
+  "0252": { name: "キモリ", ext: "wav" },
+  "0253": { name: "ジュプトル", ext: "wav" },
+  "0254": { name: "ジュカイン", ext: "wav" },
+  "0255": { name: "アチャモ", ext: "wav" },
+  "0256": { name: "ワカシャモ", ext: "wav" },
+  "0257": { name: "バシャーモ", ext: "wav" },
+  "0258": { name: "ミズゴロウ", ext: "wav" },
+  "0259": { name: "ヌマクロー", ext: "wav" },
+  "0260": { name: "ラグラージ", ext: "wav" },
+  "0261": { name: "ポチエナ", ext: "wav" },
+  "0262": { name: "グラエナ", ext: "wav" },
+  "0263": { name: "ジグザグマ", ext: "wav" },
+  "0264": { name: "マッスグマ", ext: "wav" },
+  "0265": { name: "ケムッソ", ext: "wav" },
+  "0266": { name: "カラサリス", ext: "wav" },
+  "0267": { name: "アゲハント", ext: "wav" },
+  "0268": { name: "マユルド", ext: "wav" },
+  "0269": { name: "ドクケイル", ext: "wav" },
+  "0270": { name: "ハスボー", ext: "wav" },
+  "0271": { name: "ハスブレロ", ext: "wav" },
+  "0272": { name: "ルンパッパ", ext: "wav" },
+  "0273": { name: "タネボー", ext: "wav" },
+  "0274": { name: "コノハナ", ext: "wav" },
+  "0275": { name: "ダーテング", ext: "wav" },
+  "0276": { name: "スバメ", ext: "wav" },
+  "0277": { name: "オオスバメ", ext: "wav" },
+  "0278": { name: "キャモメ", ext: "wav" },
+  "0279": { name: "ペリッパー", ext: "wav" },
+  "0280": { name: "ラルトス", ext: "wav" },
+  "0281": { name: "キルリア", ext: "wav" },
+  "0282": { name: "サーナイト", ext: "wav" },
+  "0283": { name: "アメタマ", ext: "wav" },
+  "0284": { name: "アメモース", ext: "wav" },
+  "0285": { name: "キノココ", ext: "wav" },
+  "0286": { name: "キノガッサ", ext: "wav" },
+  "0287": { name: "ナマケロ", ext: "wav" },
+  "0288": { name: "ヤルキモノ", ext: "wav" },
+  "0289": { name: "ケッキング", ext: "wav" },
+  "0290": { name: "ツチニン", ext: "wav" },
+  "0291": { name: "テッカニン", ext: "wav" },
+  "0292": { name: "ヌケニン", ext: "wav" },
+  "0293": { name: "ゴニョニョ", ext: "wav" },
+  "0294": { name: "ドゴーム", ext: "wav" },
+  "0295": { name: "バクオング", ext: "wav" },
+  "0296": { name: "マクノシタ", ext: "wav" },
+  "0297": { name: "ハリテヤマ", ext: "wav" },
+  "0298": { name: "ルリリ", ext: "wav" },
+  "0299": { name: "ノズパス", ext: "wav" },
+  "0300": { name: "エネコ", ext: "wav" },
+  "0301": { name: "エネコロロ", ext: "wav" },
+  "0302": { name: "ヤミラミ", ext: "wav" },
+  "0303": { name: "クチート", ext: "wav" },
+  "0304": { name: "ココドラ", ext: "wav" },
+  "0305": { name: "コドラ", ext: "wav" },
+  "0306": { name: "ボスゴドラ", ext: "wav" },
+  "0307": { name: "アサナン", ext: "wav" },
+  "0308": { name: "チャーレム", ext: "wav" },
+  "0309": { name: "ラクライ", ext: "wav" },
+  "0310": { name: "ライボルト", ext: "wav" },
+  "0311": { name: "プラスル", ext: "wav" },
+  "0312": { name: "マイナン", ext: "wav" },
+  "0313": { name: "バルビート", ext: "wav" },
+  "0314": { name: "イルミーゼ", ext: "wav" },
+  "0315": { name: "ロゼリア", ext: "wav" },
+  "0316": { name: "ゴクリン", ext: "wav" },
+  "0317": { name: "マルノーム", ext: "wav" },
+  "0318": { name: "キバニア", ext: "wav" },
+  "0319": { name: "サメハダー", ext: "wav" },
+  "0320": { name: "ホエルコ", ext: "wav" },
+  "0321": { name: "ホエルオー", ext: "wav" },
+  "0322": { name: "ドンメル", ext: "wav" },
+  "0323": { name: "バクーダ", ext: "wav" },
+  "0324": { name: "コータス", ext: "wav" },
+  "0325": { name: "バネブー", ext: "wav" },
+  "0326": { name: "ブーピッグ", ext: "wav" },
+  "0327": { name: "パッチール", ext: "wav" },
+  "0328": { name: "ナックラー", ext: "wav" },
+  "0329": { name: "ビブラーバ", ext: "wav" },
+  "0330": { name: "フライゴン", ext: "wav" },
+  "0331": { name: "サボネア", ext: "wav" },
+  "0332": { name: "ノクタス", ext: "wav" },
+  "0333": { name: "チルット", ext: "wav" },
+  "0334": { name: "チルタリス", ext: "wav" },
+  "0335": { name: "ザングース", ext: "wav" },
+  "0336": { name: "ハブネーク", ext: "wav" },
+  "0337": { name: "ルナトーン", ext: "wav" },
+  "0338": { name: "ソルロック", ext: "wav" },
+  "0339": { name: "ドジョッチ", ext: "wav" },
+  "0340": { name: "ナマズン", ext: "wav" },
+  "0341": { name: "ヘイガニ", ext: "wav" },
+  "0342": { name: "シザリガー", ext: "wav" },
+  "0343": { name: "ヤジロン", ext: "wav" },
+  "0344": { name: "ネンドール", ext: "wav" },
+  "0345": { name: "リリーラ", ext: "wav" },
+  "0346": { name: "ユレイドル", ext: "wav" },
+  "0347": { name: "アノプス", ext: "wav" },
+  "0348": { name: "アーマルド", ext: "wav" },
+  "0349": { name: "ヒンバス", ext: "wav" },
+  "0350": { name: "ミロカロス", ext: "wav" },
+  "0351": { name: "ポワルン", ext: "wav" },
+  "0352": { name: "カクレオン", ext: "wav" },
+  "0353": { name: "カゲボウズ", ext: "wav" },
+  "0354": { name: "ジュペッタ", ext: "wav" },
+  "0355": { name: "ヨマワル", ext: "wav" },
+  "0356": { name: "サマヨール", ext: "wav" },
+  "0357": { name: "トロピウス", ext: "wav" },
+  "0358": { name: "チリーン", ext: "wav" },
+  "0359": { name: "アブソル", ext: "wav" },
+  "0360": { name: "ソーナノ", ext: "wav" },
+  "0361": { name: "ユキワラシ", ext: "wav" },
+  "0362": { name: "オニゴーリ", ext: "wav" },
+  "0363": { name: "タマザラシ", ext: "wav" },
+  "0364": { name: "トドグラー", ext: "wav" },
+  "0365": { name: "トドゼルガ", ext: "wav" },
+  "0366": { name: "パールル", ext: "wav" },
+  "0367": { name: "ハンテール", ext: "wav" },
+  "0368": { name: "サクラビス", ext: "wav" },
+  "0369": { name: "ジーランス", ext: "wav" },
+  "0370": { name: "ラブカス", ext: "wav" },
+  "0371": { name: "タツベイ", ext: "wav" },
+  "0372": { name: "コモルー", ext: "wav" },
+  "0373": { name: "ボーマンダ", ext: "wav" },
+  "0374": { name: "ダンバル", ext: "wav" },
+  "0375": { name: "メタング", ext: "wav" },
+  "0376": { name: "メタグロス", ext: "wav" },
+  "0377": { name: "レジロック", ext: "wav" },
+  "0378": { name: "レジアイス", ext: "wav" },
+  "0379": { name: "レジスチル", ext: "wav" },
+  "0380": { name: "ラティアス", ext: "wav" },
+  "0381": { name: "ラティオス", ext: "wav" },
+  "0382": { name: "カイオーガ", ext: "wav" },
+  "0383": { name: "グラードン", ext: "wav" },
+  "0384": { name: "レックウザ", ext: "wav" },
+  "0385": { name: "ジラーチ", ext: "wav" },
+  "0386": { name: "デオキシス", ext: "wav" },
+  "0387": { name: "ナエトル", ext: "mp3" },
+  "0388": { name: "ハヤシガメ", ext: "mp3" },
+  "0389": { name: "ドダイトス", ext: "mp3" },
+  "0390": { name: "ヒコザル", ext: "mp3" },
+  "0391": { name: "モウカザル", ext: "mp3" },
+  "0392": { name: "ゴウカザル", ext: "mp3" },
+  "0393": { name: "ポッチャマ", ext: "mp3" },
+  "0394": { name: "ポッタイシ", ext: "mp3" },
+  "0395": { name: "エンペルト", ext: "mp3" },
+  "0396": { name: "ムックル", ext: "mp3" },
+  "0397": { name: "ムクバード", ext: "mp3" },
+  "0398": { name: "ムクホーク", ext: "mp3" },
+  "0399": { name: "ビッパ", ext: "mp3" },
+  "0400": { name: "ビーダル", ext: "mp3" },
+  "0401": { name: "コロボーシ", ext: "mp3" },
+  "0402": { name: "コロトック", ext: "mp3" },
+  "0403": { name: "コリンク", ext: "mp3" },
+  "0404": { name: "ルクシオ", ext: "mp3" },
+  "0405": { name: "レントラー", ext: "mp3" },
+  "0406": { name: "スボミー", ext: "mp3" },
+  "0407": { name: "ロズレイド", ext: "mp3" },
+  "0408": { name: "ズガイドス", ext: "mp3" },
+  "0409": { name: "ラムパルド", ext: "mp3" },
+  "0410": { name: "タテトプス", ext: "mp3" },
+  "0411": { name: "トリデプス", ext: "mp3" },
+  "0412": { name: "ミノムッチ", ext: "mp3" },
+  "0413": { name: "ミノマダム", ext: "mp3" },
+  "0414": { name: "ガーメイル", ext: "mp3" },
+  "0415": { name: "ミツハニー", ext: "mp3" },
+  "0416": { name: "ビークイン", ext: "mp3" },
+  "0417": { name: "パチリス", ext: "mp3" },
+  "0418": { name: "ブイゼル", ext: "mp3" },
+  "0419": { name: "フローゼル", ext: "mp3" },
+  "0420": { name: "チェリンボ", ext: "mp3" },
+  "0421": { name: "チェリム", ext: "mp3" },
+  "0422": { name: "カラナクシ", ext: "mp3" },
+  "0423": { name: "トリトドン", ext: "mp3" },
+  "0424": { name: "エテボース", ext: "mp3" },
+  "0425": { name: "フワンテ", ext: "mp3" },
+  "0426": { name: "フワライド", ext: "mp3" },
+  "0427": { name: "ミミロル", ext: "mp3" },
+  "0428": { name: "ミミロップ", ext: "mp3" },
+  "0429": { name: "ムウマージ", ext: "mp3" },
+  "0430": { name: "ドンカラス", ext: "mp3" },
+  "0431": { name: "ニャルマー", ext: "mp3" },
+  "0432": { name: "ブニャット", ext: "mp3" },
+  "0433": { name: "リーシャン", ext: "mp3" },
+  "0434": { name: "スカンプー", ext: "mp3" },
+  "0435": { name: "スカタンク", ext: "mp3" },
+  "0436": { name: "ドーミラー", ext: "mp3" },
+  "0437": { name: "ドータクン", ext: "mp3" },
+  "0438": { name: "ウソハチ", ext: "mp3" },
+  "0439": { name: "マネネ", ext: "mp3" },
+  "0440": { name: "ピンプク", ext: "mp3" },
+  "0441": { name: "ペラップ", ext: "mp3" },
+  "0442": { name: "ミカルゲ", ext: "mp3" },
+  "0443": { name: "フカマル", ext: "mp3" },
+  "0444": { name: "ガバイト", ext: "mp3" },
+  "0445": { name: "ガブリアス", ext: "mp3" },
+  "0446": { name: "ゴンベ", ext: "mp3" },
+  "0447": { name: "リオル", ext: "mp3" },
+  "0448": { name: "ルカリオ", ext: "mp3" },
+  "0449": { name: "ヒポポタス", ext: "mp3" },
+  "0450": { name: "カバルドン", ext: "mp3" },
+  "0451": { name: "スコルピ", ext: "mp3" },
+  "0452": { name: "ドラピオン", ext: "mp3" },
+  "0453": { name: "グレッグル", ext: "mp3" },
+  "0454": { name: "ドクロッグ", ext: "mp3" },
+  "0455": { name: "マスキッパ", ext: "mp3" },
+  "0456": { name: "ケイコウオ", ext: "mp3" },
+  "0457": { name: "ネオラント", ext: "mp3" },
+  "0458": { name: "タマンタ", ext: "mp3" },
+  "0459": { name: "ユキカブリ", ext: "mp3" },
+  "0460": { name: "ユキノオー", ext: "mp3" },
+  "0461": { name: "マニューラ", ext: "mp3" },
+  "0462": { name: "ジバコイル", ext: "mp3" },
+  "0463": { name: "ベロベルト", ext: "mp3" },
+  "0464": { name: "ドサイドン", ext: "mp3" },
+  "0465": { name: "モジャンボ", ext: "mp3" },
+  "0466": { name: "エレキブル", ext: "mp3" },
+  "0467": { name: "ブーバーン", ext: "mp3" },
+  "0468": { name: "トゲキッス", ext: "mp3" },
+  "0469": { name: "メガヤンマ", ext: "mp3" },
+  "0470": { name: "リーフィア", ext: "mp3" },
+  "0471": { name: "グレイシア", ext: "mp3" },
+  "0472": { name: "グライオン", ext: "mp3" },
+  "0473": { name: "マンムー", ext: "mp3" },
+  "0474": { name: "ポリゴンＺ", ext: "mp3" },
+  "0475": { name: "エルレイド", ext: "mp3" },
+  "0476": { name: "ダイノーズ", ext: "mp3" },
+  "0477": { name: "ヨノワール", ext: "mp3" },
+  "0478": { name: "ユキメノコ", ext: "mp3" },
+  "0479": { name: "ロトム", ext: "mp3" },
+  "0480": { name: "ユクシー", ext: "mp3" },
+  "0481": { name: "エムリット", ext: "mp3" },
+  "0482": { name: "アグノム", ext: "mp3" },
+  "0483": { name: "ディアルガ", ext: "mp3" },
+  "0484": { name: "パルキア", ext: "mp3" },
+  "0485": { name: "ヒードラン", ext: "mp3" },
+  "0486": { name: "レジギガス", ext: "mp3" },
+  "0487": { name: "ギラティナ", ext: "mp3" },
+  "0488": { name: "クレセリア", ext: "mp3" },
+  "0489": { name: "フィオネ", ext: "mp3" },
+  "0490": { name: "マナフィ", ext: "mp3" },
+  "0491": { name: "ダークライ", ext: "mp3" },
+  "0492": { name: "シェイミ", ext: "mp3" },
+  "0493": { name: "アルセウス", ext: "mp3" },
+  "0494": { name: "ビクティニ", ext: "mp3" },
+  "0495": { name: "ツタージャ", ext: "mp3" },
+  "0496": { name: "ジャノビー", ext: "mp3" },
+  "0497": { name: "ジャローダ", ext: "mp3" },
+  "0498": { name: "ポカブ", ext: "mp3" },
+  "0499": { name: "チャオブー", ext: "mp3" },
+  "0500": { name: "エンブオー", ext: "mp3" },
+  "0501": { name: "ミジュマル", ext: "mp3" },
+  "0502": { name: "フタチマル", ext: "mp3" },
+  "0503": { name: "ダイケンキ", ext: "mp3" },
+  "0504": { name: "ミネズミ", ext: "mp3" },
+  "0505": { name: "ミルホッグ", ext: "mp3" },
+  "0506": { name: "ヨーテリー", ext: "mp3" },
+  "0507": { name: "ハーデリア", ext: "mp3" },
+  "0508": { name: "ムーランド", ext: "mp3" },
+  "0509": { name: "チョロネコ", ext: "mp3" },
+  "0510": { name: "レパルダス", ext: "mp3" },
+  "0511": { name: "ヤナップ", ext: "mp3" },
+  "0512": { name: "ヤナッキー", ext: "mp3" },
+  "0513": { name: "バオップ", ext: "mp3" },
+  "0514": { name: "バオッキー", ext: "mp3" },
+  "0515": { name: "ヒヤップ", ext: "mp3" },
+  "0516": { name: "ヒヤッキー", ext: "mp3" },
+  "0517": { name: "ムンナ", ext: "mp3" },
+  "0518": { name: "ムシャーナ", ext: "mp3" },
+  "0519": { name: "マメパト", ext: "mp3" },
+  "0520": { name: "ハトーボー", ext: "mp3" },
+  "0521": { name: "ケンホロウ", ext: "mp3" },
+  "0522": { name: "シママ", ext: "mp3" },
+  "0523": { name: "ゼブライカ", ext: "mp3" },
+  "0524": { name: "ダンゴロ", ext: "mp3" },
+  "0525": { name: "ガントル", ext: "mp3" },
+  "0526": { name: "ギガイアス", ext: "mp3" },
+  "0527": { name: "コロモリ", ext: "mp3" },
+  "0528": { name: "ココロモリ", ext: "mp3" },
+  "0529": { name: "モグリュー", ext: "mp3" },
+  "0530": { name: "ドリュウズ", ext: "mp3" },
+  "0531": { name: "タブンネ", ext: "mp3" },
+  "0532": { name: "ドッコラー", ext: "mp3" },
+  "0533": { name: "ドテッコツ", ext: "mp3" },
+  "0534": { name: "ローブシン", ext: "mp3" },
+  "0535": { name: "オタマロ", ext: "mp3" },
+  "0536": { name: "ガマガル", ext: "mp3" },
+  "0537": { name: "ガマゲロゲ", ext: "mp3" },
+  "0538": { name: "ナゲキ", ext: "mp3" },
+  "0539": { name: "ダゲキ", ext: "mp3" },
+  "0540": { name: "クルミル", ext: "mp3" },
+  "0541": { name: "クルマユ", ext: "mp3" },
+  "0542": { name: "ハハコモリ", ext: "mp3" },
+  "0543": { name: "フシデ", ext: "mp3" },
+  "0544": { name: "ホイーガ", ext: "mp3" },
+  "0545": { name: "ペンドラー", ext: "mp3" },
+  "0546": { name: "モンメン", ext: "mp3" },
+  "0547": { name: "エルフーン", ext: "mp3" },
+  "0548": { name: "チュリネ", ext: "mp3" },
+  "0549": { name: "ドレディア", ext: "mp3" },
+  "0550": { name: "バスラオ", ext: "mp3" },
+  "0551": { name: "メグロコ", ext: "mp3" },
+  "0552": { name: "ワルビル", ext: "mp3" },
+  "0553": { name: "ワルビアル", ext: "mp3" },
+  "0554": { name: "ダルマッカ", ext: "mp3" },
+  "0555": { name: "ヒヒダルマ", ext: "mp3" },
+  "0556": { name: "マラカッチ", ext: "mp3" },
+  "0557": { name: "イシズマイ", ext: "mp3" },
+  "0558": { name: "イワパレス", ext: "mp3" },
+  "0559": { name: "ズルッグ", ext: "mp3" },
+  "0560": { name: "ズルズキン", ext: "mp3" },
+  "0561": { name: "シンボラー", ext: "mp3" },
+  "0562": { name: "デスマス", ext: "mp3" },
+  "0563": { name: "デスカーン", ext: "mp3" },
+  "0564": { name: "プロトーガ", ext: "mp3" },
+  "0565": { name: "アバゴーラ", ext: "mp3" },
+  "0566": { name: "アーケン", ext: "mp3" },
+  "0567": { name: "アーケオス", ext: "mp3" },
+  "0568": { name: "ヤブクロン", ext: "mp3" },
+  "0569": { name: "ダストダス", ext: "mp3" },
+  "0570": { name: "ゾロア", ext: "mp3" },
+  "0571": { name: "ゾロアーク", ext: "mp3" },
+  "0572": { name: "チラーミィ", ext: "mp3" },
+  "0573": { name: "チラチーノ", ext: "mp3" },
+  "0574": { name: "ゴチム", ext: "mp3" },
+  "0575": { name: "ゴチミル", ext: "mp3" },
+  "0576": { name: "ゴチルゼル", ext: "mp3" },
+  "0577": { name: "ユニラン", ext: "mp3" },
+  "0578": { name: "ダブラン", ext: "mp3" },
+  "0579": { name: "ランクルス", ext: "mp3" },
+  "0580": { name: "コアルヒー", ext: "mp3" },
+  "0581": { name: "スワンナ", ext: "mp3" },
+  "0582": { name: "バニプッチ", ext: "mp3" },
+  "0583": { name: "バニリッチ", ext: "mp3" },
+  "0584": { name: "バイバニラ", ext: "mp3" },
+  "0585": { name: "シキジカ", ext: "mp3" },
+  "0586": { name: "メブキジカ", ext: "mp3" },
+  "0587": { name: "エモンガ", ext: "mp3" },
+  "0588": { name: "カブルモ", ext: "mp3" },
+  "0589": { name: "シュバルゴ", ext: "mp3" },
+  "0590": { name: "タマゲタケ", ext: "mp3" },
+  "0591": { name: "モロバレル", ext: "mp3" },
+  "0592": { name: "プルリル", ext: "mp3" },
+  "0593": { name: "ブルンゲル", ext: "mp3" },
+  "0594": { name: "ママンボウ", ext: "mp3" },
+  "0595": { name: "バチュル", ext: "mp3" },
+  "0596": { name: "デンチュラ", ext: "mp3" },
+  "0597": { name: "テッシード", ext: "mp3" },
+  "0598": { name: "ナットレイ", ext: "mp3" },
+  "0599": { name: "ギアル", ext: "mp3" },
+  "0600": { name: "ギギアル", ext: "mp3" },
+  "0601": { name: "ギギギアル", ext: "mp3" },
+  "0602": { name: "シビシラス", ext: "mp3" },
+  "0603": { name: "シビビール", ext: "mp3" },
+  "0604": { name: "シビルドン", ext: "mp3" },
+  "0605": { name: "リグレー", ext: "mp3" },
+  "0606": { name: "オーベム", ext: "mp3" },
+  "0607": { name: "ヒトモシ", ext: "mp3" },
+  "0608": { name: "ランプラー", ext: "mp3" },
+  "0609": { name: "シャンデラ", ext: "mp3" },
+  "0610": { name: "キバゴ", ext: "mp3" },
+  "0611": { name: "オノンド", ext: "mp3" },
+  "0612": { name: "オノノクス", ext: "mp3" },
+  "0613": { name: "クマシュン", ext: "mp3" },
+  "0614": { name: "ツンベアー", ext: "mp3" },
+  "0615": { name: "フリージオ", ext: "mp3" },
+  "0616": { name: "チョボマキ", ext: "mp3" },
+  "0617": { name: "アギルダー", ext: "mp3" },
+  "0618": { name: "マッギョ", ext: "mp3" },
+  "0619": { name: "コジョフー", ext: "mp3" },
+  "0620": { name: "コジョンド", ext: "mp3" },
+  "0621": { name: "クリムガン", ext: "mp3" },
+  "0622": { name: "ゴビット", ext: "mp3" },
+  "0623": { name: "ゴルーグ", ext: "mp3" },
+  "0624": { name: "コマタナ", ext: "mp3" },
+  "0625": { name: "キリキザン", ext: "mp3" },
+  "0626": { name: "バッフロン", ext: "mp3" },
+  "0627": { name: "ワシボン", ext: "mp3" },
+  "0628": { name: "ウォーグル", ext: "mp3" },
+  "0629": { name: "バルチャイ", ext: "mp3" },
+  "0630": { name: "バルジーナ", ext: "mp3" },
+  "0631": { name: "クイタラン", ext: "mp3" },
+  "0632": { name: "アイアント", ext: "mp3" },
+  "0633": { name: "モノズ", ext: "mp3" },
+  "0634": { name: "ジヘッド", ext: "mp3" },
+  "0635": { name: "サザンドラ", ext: "mp3" },
+  "0636": { name: "メラルバ", ext: "mp3" },
+  "0637": { name: "ウルガモス", ext: "mp3" },
+  "0638": { name: "コバルオン", ext: "mp3" },
+  "0639": { name: "テラキオン", ext: "mp3" },
+  "0640": { name: "ビリジオン", ext: "mp3" },
+  "0641": { name: "トルネロス", ext: "mp3" },
+  "0642": { name: "ボルトロス", ext: "mp3" },
+  "0643": { name: "レシラム", ext: "mp3" },
+  "0644": { name: "ゼクロム", ext: "mp3" },
+  "0645": { name: "ランドロス", ext: "mp3" },
+  "0646": { name: "キュレム", ext: "mp3" },
+  "0647": { name: "ケルディオ", ext: "mp3" },
+  "0648": { name: "メロエッタ", ext: "mp3" },
+  "0649": { name: "ゲノセクト", ext: "mp3" }
 };
 
-const BASE_URL = 'https://raw.githubusercontent.com/snjarkk/pokecry/main/sound/';
+const BASE_URL = './pokewav/';
 const DB_NAME = 'PokemonCryDB_v5'; 
 const STORE_NAME = 'fingerprints_v5';
 
@@ -320,6 +809,19 @@ function loadQuizList() {
 }
 function saveQuizList() { localStorage.setItem(SAVED_LIST_KEY, JSON.stringify(registeredQuizIds)); }
 
+function populateDatalist() {
+    const list = document.getElementById('pokemon-names-list');
+    list.innerHTML = "";
+    Object.keys(POKEMON_DB).forEach(id => {
+        const optName = document.createElement('option');
+        optName.value = POKEMON_DB[id].name;
+        list.appendChild(optName);
+        const optId = document.createElement('option');
+        optId.value = parseInt(id).toString(); 
+        list.appendChild(optId);
+    });
+}
+
 async function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
@@ -331,8 +833,8 @@ async function initDB() {
 
 async function extractV5Fingerprint(audioBuffer) {
     const data = audioBuffer.getChannelData(0);
-    const stepSize = Math.floor(audioBuffer.sampleRate * 0.025); 
-    const windowSize = Math.floor(audioBuffer.sampleRate * 0.05); 
+    const stepSize = Math.floor(audioBuffer.sampleRate * 0.02); 
+    const windowSize = Math.floor(audioBuffer.sampleRate * 0.04); 
     const fingerprint = [];
     let prevRMS = 0;
     for (let i = 0; i < data.length - windowSize; i += stepSize) {
@@ -350,6 +852,7 @@ async function extractV5Fingerprint(audioBuffer) {
 }
 
 async function prepareData() {
+    populateDatalist();
     const db = await initDB();
     const ids = Object.keys(POKEMON_DB);
     let loadedCount = 0;
@@ -529,7 +1032,7 @@ function drawWave() {
     const midY = canvas.height / 2;
     for(let i=0; i<waveHistory.length; i++) {
         const x = (i / waveHistory.length) * canvas.width;
-        const h = Math.min(canvas.height / 2 - 2, (waveHistory[i] / 128) * (canvas.height * 2.5));
+        const h = Math.min(canvas.height / 2 - 1, (waveHistory[i] / 128) * (canvas.height * 4.0));
         canvasCtx.moveTo(x, midY - h); canvasCtx.lineTo(x, midY + h);
     }
     canvasCtx.stroke();
@@ -554,7 +1057,7 @@ function compareFingerprints(sig1, sig2) {
         }
         d = Math.sqrt(d / sh.length); if (d < minD) minD = d;
     }
-    return 100 * Math.exp(-minD * 1.2);
+    return 100 * Math.exp(-minD * 1.0);
 }
 
 function identifyPokemon(inputSig) {
@@ -569,7 +1072,7 @@ function identifyPokemon(inputSig) {
             const m = matches[j + 1];
             if (m) {
                 const s = Math.floor(Math.min(displayScore - (j+1)*5, m.score + 10));
-                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.max(5, s)}%`; subs[j].i.innerText = `No.${m.id}`;
+                subs[j].n.innerText = POKEMON_DB[m.id].name; subs[j].s.innerText = `${subs[j].l}: ${Math.floor(m.score)}%`; subs[j].i.innerText = `No.${m.id}`;
             }
         }
         resMinorList.innerHTML = "";
