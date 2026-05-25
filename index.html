@@ -101,6 +101,7 @@
                 <input type="text" id="input-reg-id" placeholder="No. または 名前" list="pokemon-names-list">
                 <datalist id="pokemon-names-list"></datalist>
                 <button id="btn-reg-add" onclick="addPokemonToQuiz()">追加</button>
+                <button id="btn-reg-init" onclick="initQuizList()" style="background:#444; color:white; border:none; padding:0 10px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer;">初期化</button>
             </div>
             <div class="reg-list-title"><span>クイズ対象 (最大30匹 / タップで削除)</span><span id="reg-count">0/30</span></div>
             <div id="reg-pokemon-list"></div>
@@ -808,6 +809,15 @@ function loadQuizList() {
     if (saved) { registeredQuizIds = JSON.parse(saved); renderRegisteredList(); }
 }
 function saveQuizList() { localStorage.setItem(SAVED_LIST_KEY, JSON.stringify(registeredQuizIds)); }
+
+function initQuizList() {
+    if (!confirm("クイズリストを初期化しますか？")) return;
+    const defaultIds = ["0025", "0149", "0080", "0017", "0054", "0019", "0041", "0078"];
+    registeredQuizIds = [...defaultIds];
+    renderRegisteredList();
+    saveQuizList();
+    updateQuizUI();
+}
 
 function populateDatalist() {
     const list = document.getElementById('pokemon-names-list');
