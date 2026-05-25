@@ -107,7 +107,13 @@
             <div id="reg-pokemon-list"></div>
         </div>
         <div class="quiz-container">
-            <div id="btn-quiz-play"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="quiz-controls" style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
+                <div id="quiz-stats" style="text-align: left; font-size: 11px; line-height: 1.4; color: var(--subtext); min-width: 100px;">
+                    <div>本日の回答数: <span id="stats-count">0/0</span></div>
+                    <div>本日の正解率: <span id="stats-percent">0%</span></div>
+                </div>
+                <div id="btn-quiz-play"><svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            </div>
             <div class="choices" id="quiz-choices">
                 <div class="choice-btn" onclick="checkAnswer(0)">---</div>
                 <div class="choice-btn" onclick="checkAnswer(1)">---</div>
@@ -802,13 +808,48 @@ let analyser, waveDataArray, animationId, waveHistory = [];
 let quizCorrectId = "";
 let quizChoices = [];
 let registeredQuizIds = []; 
+let quizTotalCount = 0;
+let quizCorrectCount = 0;
+let nextQuizTimeout = null;
 
 const SAVED_LIST_KEY = "pokecry_quiz_list";
+const STATS_KEY = "pokecry_quiz_stats";
+
 function loadQuizList() {
     const saved = localStorage.getItem(SAVED_LIST_KEY);
     if (saved) { registeredQuizIds = JSON.parse(saved); renderRegisteredList(); }
+    loadStats();
 }
+
 function saveQuizList() { localStorage.setItem(SAVED_LIST_KEY, JSON.stringify(registeredQuizIds)); }
+
+function loadStats() {
+    const saved = localStorage.getItem(STATS_KEY);
+    const today = new Date().toLocaleDateString();
+    if (saved) {
+        const stats = JSON.parse(saved);
+        if (stats.date === today) {
+            quizTotalCount = stats.total || 0;
+            quizCorrectCount = stats.correct || 0;
+        } else {
+            quizTotalCount = 0;
+            quizCorrectCount = 0;
+        }
+    }
+    updateStatsUI();
+}
+
+function saveStats() {
+    const today = new Date().toLocaleDateString();
+    const stats = { date: today, total: quizTotalCount, correct: quizCorrectCount };
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+}
+
+function updateStatsUI() {
+    document.getElementById('stats-count').innerText = `${quizCorrectCount}/${quizTotalCount}`;
+    const percent = quizTotalCount > 0 ? Math.floor((quizCorrectCount / quizTotalCount) * 100) : 0;
+    document.getElementById('stats-percent').innerText = `${percent}%`;
+}
 
 function initQuizList() {
     if (!confirm("クイズリストを初期化しますか？")) return;
@@ -958,6 +999,7 @@ function updateQuizUI() {
 
 function nextQuiz() {
     if (registeredQuizIds.length < 3) return;
+    if (nextQuizTimeout) { clearTimeout(nextQuizTimeout); nextQuizTimeout = null; }
     quizCorrectId = registeredQuizIds[Math.floor(Math.random() * registeredQuizIds.length)];
     let distractors = [];
     let pool = registeredQuizIds.filter(id => id !== quizCorrectId);
@@ -994,7 +1036,18 @@ function checkAnswer(index) {
     if (registeredQuizIds.length < 3 || document.getElementById('btn-next-quiz').style.display === 'block') return;
     const choiceButtons = document.querySelectorAll('.choice-btn');
     const feedback = document.getElementById('quiz-feedback');
+    
+    // 日付が変わっていたらリセット
+    const today = new Date().toLocaleDateString();
+    const saved = localStorage.getItem(STATS_KEY);
+    if (saved && JSON.parse(saved).date !== today) {
+        quizTotalCount = 0;
+        quizCorrectCount = 0;
+    }
+
+    quizTotalCount++;
     if (quizChoices[index] === quizCorrectId) {
+        quizCorrectCount++;
         choiceButtons[index].classList.add('correct');
         feedback.innerText = "CORRECT! ✨"; feedback.style.color = "var(--correct)";
     } else {
@@ -1002,7 +1055,19 @@ function checkAnswer(index) {
         feedback.innerText = "WRONG... 😢"; feedback.style.color = "var(--wrong)";
         quizChoices.forEach((id, i) => { if (id === quizCorrectId) choiceButtons[i].classList.add('correct'); });
     }
+    
+    // 統計の保存と表示更新
+    saveStats();
+    updateStatsUI();
+    
     document.getElementById('btn-next-quiz').style.display = 'block';
+    
+    // 2.5秒後に自動遷移
+    nextQuizTimeout = setTimeout(() => {
+        if (document.getElementById('quiz-section').classList.contains('active')) {
+            nextQuiz();
+        }
+    }, 2500);
 }
 
 document.getElementById('btn-quiz-play').addEventListener('click', playQuizCry);
